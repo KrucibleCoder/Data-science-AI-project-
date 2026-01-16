@@ -1,4 +1,5 @@
 from fastapi import FastAPI, UploadFile, File
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 import uuid
@@ -7,6 +8,18 @@ from app.storage import UPLOAD_DIR, OUTPUT_DIR, clear_storage
 from app.variants import generate_dummy_variants
 
 app = FastAPI(title="AI Image Colorizer API")
+
+# ✅ CORS for React frontend (Vite usually runs on 5173)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Serve uploads and outputs so they can be opened in browser
 app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
@@ -20,7 +33,6 @@ def root():
 
 @app.post("/api/upload")
 async def upload_image(file: UploadFile = File(...)):
-    # Create unique name
     ext = Path(file.filename).suffix.lower()
     if ext not in [".png", ".jpg", ".jpeg", ".webp"]:
         return {"error": "Unsupported file type. Use png/jpg/jpeg/webp."}
