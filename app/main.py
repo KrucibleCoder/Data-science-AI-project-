@@ -1,11 +1,11 @@
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 import uuid
 
 from app.storage import UPLOAD_DIR, OUTPUT_DIR, clear_storage
-from app.variants import generate_dummy_variants
+from app.pipeline import process_image
 
 app = FastAPI(title="AI Image Colorizer API")
 
@@ -32,7 +32,10 @@ def root():
 
 
 @app.post("/api/upload")
-async def upload_image(file: UploadFile = File(...)):
+async def upload_image(
+    file: UploadFile = File(...),
+    mode: str = Query("enhance")
+):
     ext = Path(file.filename).suffix.lower()
     if ext not in [".png", ".jpg", ".jpeg", ".webp"]:
         return {"error": "Unsupported file type. Use png/jpg/jpeg/webp."}
@@ -44,14 +47,15 @@ async def upload_image(file: UploadFile = File(...)):
     contents = await file.read()
     save_path.write_bytes(contents)
 
-    # Create 3 dummy variants
-    variant_paths = generate_dummy_variants(save_path, OUTPUT_DIR)
+    # Create variants based on selected mode
+    variant_paths = process_image(save_path, OUTPUT_DIR, mode)
 
     # Return public URLs
     variants = [f"/outputs/{p.name}" for p in variant_paths]
 
     return {
         "message": "Upload successful",
+        "mode": mode,
         "original": f"/uploads/{save_path.name}",
         "variants": variants
     }

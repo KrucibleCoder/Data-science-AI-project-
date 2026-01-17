@@ -5,6 +5,7 @@ const API_BASE = "http://127.0.0.1:8000";
 
 export default function App() {
   const [file, setFile] = useState(null);
+  const [mode, setMode] = useState("enhance"); // ✅ NEW
   const [originalUrl, setOriginalUrl] = useState("");
   const [variants, setVariants] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -23,13 +24,14 @@ export default function App() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const res = await axios.post(`${API_BASE}/api/upload`, formData, {
+      // ✅ Send mode as query param
+      const res = await axios.post(`${API_BASE}/api/upload?mode=${mode}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
       setOriginalUrl(`${API_BASE}${res.data.original}`);
       setVariants(res.data.variants.map((v) => `${API_BASE}${v}`));
-      setMsg("✅ Generated variants successfully!");
+      setMsg(`✅ Generated variants successfully! (Mode: ${mode})`);
     } catch (err) {
       console.error(err);
       setMsg("❌ Upload failed. Check backend is running.");
@@ -57,14 +59,25 @@ export default function App() {
   return (
     <div style={{ maxWidth: 1000, margin: "40px auto", fontFamily: "sans-serif" }}>
       <h1>AI Image Colorizer (MVP)</h1>
-      <p>Upload an image, get 3 variants, download what you like.</p>
+      <p>Upload an image, pick a mode, get 3 variants, download what you like.</p>
 
-      <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+      <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
         <input
           type="file"
           accept="image/png,image/jpeg,image/webp"
           onChange={(e) => setFile(e.target.files?.[0] || null)}
         />
+
+        {/* ✅ NEW: Mode selector */}
+        <select
+          value={mode}
+          onChange={(e) => setMode(e.target.value)}
+          style={{ padding: "6px 10px", borderRadius: 8 }}
+        >
+          <option value="enhance">Enhance Only</option>
+          <option value="colorize">Colorize Only</option>
+          <option value="both">Enhance + Colorize</option>
+        </select>
 
         <button onClick={handleUpload} disabled={loading}>
           {loading ? "Processing..." : "Generate Variants"}
