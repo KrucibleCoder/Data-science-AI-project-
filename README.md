@@ -66,22 +66,33 @@ AI-colorizer/
 git clone <YOUR_REPO_URL>
 cd AI-colorizer
 Backend Setup (FastAPI)
-2) Create and activate virtual environment
+```
+
+### 2) Create and activate virtual environment
+```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
+```
 If activation is blocked due to execution policy:
 
 Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
-3) Install Python dependencies
-pip install fastapi uvicorn python-multipart pillow opencv-python numpy
-Model Setup (IMPORTANT)
-This project uses OpenCV DNN colorization weights.
-These model files are NOT committed to GitHub (they are ignored in .gitignore).
 
-4) Create models folder
+### 3) Install Python dependencies
+```powershell
+pip install fastapi uvicorn python-multipart pillow opencv-python numpy
+```
+
+### Model Setup (IMPORTANT)
+### This project uses OpenCV DNN colorization weights.
+### These model files are NOT committed to GitHub (they are ignored in .gitignore).
+
+### 4) Create models folder
+```powershell
 mkdir models
 mkdir models\colorization
-5) Download the model files and place them here:
+```
+
+### 5) Download the model files and place them here:
 ✅ Put these 3 files into:
 
 models/colorization/
@@ -100,10 +111,12 @@ models/colorization/colorization_release_v2.caffemodel
 models/colorization/pts_in_hull.npy
 ⚠️ If these files are missing, Colorize mode will fail.
 
-6) Run the backend
+### 6) Run the backend
 From repo root:
 
+```powershell
 uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+```
 Backend URL:
 
 http://127.0.0.1:8000
@@ -112,19 +125,25 @@ Swagger docs:
 
 http://127.0.0.1:8000/docs
 
-Frontend Setup (React)
-7) Install frontend dependencies
+## Frontend Setup (React)
+### 7) Install frontend dependencies
 Open a NEW terminal in the repo root:
 
+```powershell
 cd frontend
 npm install
-8) Start frontend
+```
+
+### 8) Start frontend
+```powershell
 npm run dev
+```
+
 Frontend URL:
 
 http://localhost:5173
 
-How to Use
+## How to Use:
 Open the frontend in your browser:
 
 http://localhost:5173
@@ -168,10 +187,10 @@ Deletes everything from:
 
 /outputs
 
-Notes About Large Files (IMPORTANT)
+## Notes About Large Files (IMPORTANT)
 Model weight files are ignored and should never be committed.
 
-Your .gitignore includes:
+### Your .gitignore includes:
 
 .venv/
 
@@ -187,7 +206,7 @@ Common Issues
 Frontend says: "Upload failed. Check backend is running."
 Fix:
 
-Make sure backend is running at:
+## Make sure backend is running at:
 
 http://127.0.0.1:8000
 
@@ -195,15 +214,16 @@ Ensure FastAPI has CORS enabled for:
 
 http://localhost:5173
 
-Colorize mode crashes / doesn't work
-Cause:
+## Colorize mode crashes / doesn't work
+### Cause:
 Missing model files.
 
-Fix:
+### Fix:
 Make sure the 3 required files exist inside:
 
 models/colorization/
-Future Improvements
+
+# Future Improvements
 Higher quality AI colorization model (DeOldify / diffusion)
 
 Better multi-variant generation (real variety)
@@ -214,5 +234,5 @@ Batch processing
 
 Offline EXE / APK packaging
 
-License
+# License
 Add your license here (MIT recommended for open source).
