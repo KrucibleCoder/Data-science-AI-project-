@@ -139,6 +139,7 @@ Frontend URL:
 
 http://localhost:5173
 
+---
 ## How to Use:
 Open the frontend in your browser:
 
@@ -152,7 +153,8 @@ Open the frontend in your browser:
 5. Preview and download results
 6. Use Delete All to remove generated files
 
-API Endpoints:
+---
+## API Endpoints:
 1) POST /api/upload?mode=enhance|colorize|both
    - Uploads an image and returns output URLs.
 
@@ -175,7 +177,7 @@ API Endpoints:
    - Deletes everything from:
      - /uploads
      - /outputs
-
+---
 ### Notes About Large Files (IMPORTANT)
 Model weight files are ignored and should never be committed.
 
@@ -196,7 +198,7 @@ Frontend says: "Upload failed. Check backend is running."
 
 http://127.0.0.1:8000
 
-Ensure FastAPI has CORS enabled for:
+### Ensure FastAPI has CORS enabled for:
 
 http://localhost:5173
 
