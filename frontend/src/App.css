@@ -1,13 +1,24 @@
-/* Layout */
+/* ============================================================
+   GLOBAL PAGE LAYOUT
+   ============================================================ */
+
 .page {
   min-height: 100vh;
   padding: 28px;
   box-sizing: border-box;
   color: #eaeaf1;
-  background: radial-gradient(1200px 800px at 10% 10%, #2a2a55 0%, rgba(0, 0, 0, 0) 60%),
+
+  /* Layered gradient background for depth */
+  background:
+    radial-gradient(1200px 800px at 10% 10%, #2a2a55 0%, rgba(0, 0, 0, 0) 60%),
     radial-gradient(1200px 800px at 90% 30%, #214d4a 0%, rgba(0, 0, 0, 0) 60%),
     linear-gradient(180deg, #0b0b12 0%, #07070c 100%);
 }
+
+
+/* ============================================================
+   TOP BAR (TITLE + STATUS CHIP)
+   ============================================================ */
 
 .topbar {
   max-width: 1100px;
@@ -30,6 +41,11 @@
   max-width: 720px;
 }
 
+
+/* ============================================================
+   MAIN GRID LAYOUT (WORKSPACE + PREVIEW)
+   ============================================================ */
+
 .grid {
   max-width: 1100px;
   margin: 0 auto;
@@ -38,11 +54,17 @@
   gap: 16px;
 }
 
+/* Stack panels on smaller screens */
 @media (max-width: 900px) {
   .grid {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* ============================================================
+   CARD CONTAINERS
+   ============================================================ */
 
 .card {
   background: rgba(255, 255, 255, 0.06);
@@ -72,7 +94,11 @@
   font-size: 12px;
 }
 
-/* Controls */
+
+/* ============================================================
+   FORM CONTROLS
+   ============================================================ */
+
 .controlGroup {
   margin-top: 14px;
 }
@@ -100,7 +126,11 @@
   box-shadow: 0 0 0 4px rgba(130, 185, 255, 0.18);
 }
 
-/* File input */
+
+/* ============================================================
+   FILE INPUT (CUSTOM DROP ZONE STYLE)
+   ============================================================ */
+
 .fileBox {
   display: block;
   cursor: pointer;
@@ -152,7 +182,11 @@
   margin-top: 2px;
 }
 
-/* Buttons */
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+
 .actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -160,6 +194,7 @@
   margin-top: 14px;
 }
 
+/* Base button style (used for form actions) */
 .btn {
   width: 100%;
   padding: 10px 12px;
@@ -175,12 +210,18 @@
   cursor: not-allowed;
 }
 
+/* Primary CTA */
 .btnPrimary {
-  background: linear-gradient(135deg, rgba(130, 185, 255, 0.9), rgba(145, 255, 210, 0.7));
+  background: linear-gradient(
+    135deg,
+    rgba(130, 185, 255, 0.9),
+    rgba(145, 255, 210, 0.7)
+  );
   color: #0b0b12;
   border: none;
 }
 
+/* Destructive / secondary action */
 .btnDanger {
   background: rgba(255, 255, 255, 0.06);
   color: #eaeaf1;
@@ -190,31 +231,48 @@
   transform: translateY(-1px);
 }
 
-/* Spinner */
-.btnRow {
-  display: inline-flex;
-  gap: 8px;
-  align-items: center;
-  justify-content: center;
-}
-
-.spinner {
-  width: 14px;
-  height: 14px;
-  border: 2px solid rgba(0, 0, 0, 0.2);
-  border-top-color: rgba(0, 0, 0, 0.65);
+/* Compact button for header toolbars (e.g. Download All) */
+.btnSmall {
+  width: auto;
+  padding: 6px 14px;
+  font-size: 12px;
   border-radius: 999px;
-  display: inline-block;
-  animation: spin 0.8s linear infinite;
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+
+/* ============================================================
+   LINK-STYLE BUTTONS (used for per-image Download)
+   ============================================================ */
+
+/* Normalize <button class="link"> to behave like text links */
+.link {
+  font-size: 12px;
+  color: rgba(145, 255, 210, 0.9);
+  text-decoration: none;
 }
 
-/* Messages */
+button.link {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+button.link:hover:not(:disabled),
+a.link:hover {
+  text-decoration: underline;
+}
+
+button.link:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+/* ============================================================
+   MESSAGES / FEEDBACK
+   ============================================================ */
+
 .message {
   margin-top: 14px;
   padding: 10px 12px;
@@ -224,7 +282,11 @@
   text-align: left;
 }
 
-/* Tips */
+
+/* ============================================================
+   TIPS SECTION
+   ============================================================ */
+
 .tips {
   margin-top: 14px;
   padding-top: 14px;
@@ -244,17 +306,10 @@
   text-align: left;
 }
 
-/* Preview */
-.previewBlock {
-  margin-top: 10px;
-}
 
-.previewHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
-}
+/* ============================================================
+   PREVIEW + VARIANTS
+   ============================================================ */
 
 .badge {
   font-size: 12px;
@@ -265,16 +320,6 @@
   border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-.link {
-  font-size: 12px;
-  color: rgba(145, 255, 210, 0.9);
-  text-decoration: none;
-}
-
-.link:hover {
-  text-decoration: underline;
-}
-
 .image {
   width: 100%;
   border-radius: 14px;
@@ -282,10 +327,10 @@
 }
 
 .variantsHeader {
-  margin-top: 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
 }
 
 .variantsTitle {
@@ -317,13 +362,11 @@
   gap: 10px;
 }
 
-.variantLinks {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
 
-/* Empty state */
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+
 .empty {
   margin-top: 10px;
   border-radius: 16px;
@@ -347,7 +390,11 @@
   font-size: 13px;
 }
 
-/* Footer */
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+
 .footer {
   max-width: 1100px;
   margin: 14px auto 0 auto;
@@ -357,7 +404,11 @@
   font-size: 12px;
 }
 
-/* Tiny status chip */
+
+/* ============================================================
+   STATUS CHIP (TOP RIGHT)
+   ============================================================ */
+
 .chip {
   display: inline-flex;
   align-items: center;
@@ -374,4 +425,28 @@
   height: 8px;
   border-radius: 999px;
   background: rgba(145, 255, 210, 0.95);
+}
+
+
+/* ============================================================
+   DOWNLOAD PROGRESS OVERLAY (EPIC-STYLE)
+   ============================================================ */
+
+.imageWrapper {
+  position: relative;
+}
+
+.image.downloading {
+  filter: grayscale(100%) brightness(0.6);
+}
+
+.progressOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.progressFill {
+  height: 100%;
+  background: rgba(145, 255, 210, 0.5);
 }

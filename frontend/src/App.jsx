@@ -1,8 +1,10 @@
 import { useMemo, useState } from "react";
 import axios from "axios";
+import JSZip from "jszip";
 import "./App.css";
 
 const API_BASE = "http://127.0.0.1:8000";
+const VARIANT_LABELS = ["Natural", "Vivid", "Warm"];
 
 export default function App() {
   const [file, setFile] = useState(null);
@@ -11,6 +13,7 @@ export default function App() {
   const [variants, setVariants] = useState([]);
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
+  const [downloadProgress, setDownloadProgress] = useState({});
 
   const selectedFileName = useMemo(
     () => file?.name || "No file selected",
@@ -25,6 +28,11 @@ export default function App() {
       return;
     }
 
+    if (file.size > 10 * 1024 * 1024) {
+      setMsg("File too large. Please upload an image under 10MB.");
+      return;
+    }
+
     setLoading(true);
     setMsg("");
 
@@ -35,32 +43,26 @@ export default function App() {
       const res = await axios.post(
         `${API_BASE}/api/upload?mode=${mode}`,
         formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
+        { headers: { "Content-Type": "multipart/form-data" } }
       );
 
       setOriginalUrl(`${API_BASE}${res.data.original}`);
-      setVariants(res.data.variants.map((v) => `${API_BASE}${v}`));
-      setMsg(`✅ Done! Generated 3 variants (${mode}).`);
+      setVariants(res.data.variants.map(v => `${API_BASE}${v}`));
+      setDownloadProgress({});
+      setMsg(`✅ Generated results using "${mode}" mode.`);
     } catch (err) {
       console.error(err);
-      setMsg("❌ Upload failed. Check backend is running.");
+      setMsg("❌ Upload failed. Check backend.");
     } finally {
       setLoading(false);
     }
   }
 
   async function handleDeleteAll() {
-    if (loading) return;
-
     const confirmed = window.confirm(
       "Are you sure you want to delete all generated images?\n\nThis action cannot be undone."
     );
-
-    if (!confirmed) {
-      return;
-    }
+    if (!confirmed) return;
 
     setLoading(true);
     try {
@@ -68,6 +70,7 @@ export default function App() {
       setOriginalUrl("");
       setVariants([]);
       setFile(null);
+      setDownloadProgress({});
       setMsg("🧹 All generated images were deleted.");
     } catch (err) {
       console.error(err);
@@ -77,14 +80,73 @@ export default function App() {
     }
   }
 
+  async function forceDownloadWithProgress(url, filename) {
+    setDownloadProgress(prev => ({ ...prev, [url]: 0 }));
+
+    const res = await fetch(url);
+    const reader = res.body.getReader();
+    const contentLength = +res.headers.get("Content-Length");
+
+    let received = 0;
+    const chunks = [];
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      chunks.push(value);
+      received += value.length;
+
+      setDownloadProgress(prev => ({
+        ...prev,
+        [url]: Math.floor((received / contentLength) * 100),
+      }));
+    }
+
+    const blob = new Blob(chunks);
+    const blobUrl = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = blobUrl;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    URL.revokeObjectURL(blobUrl);
+
+    setDownloadProgress(prev => ({ ...prev, [url]: 100 }));
+  }
+
+  async function downloadAllAsZip() {
+    const zip = new JSZip();
+
+    for (let i = 0; i < variants.length; i++) {
+      const res = await fetch(variants[i]);
+      const blob = await res.blob();
+      zip.file(`${VARIANT_LABELS[i]}.jpg`, blob);
+    }
+
+    const zipBlob = await zip.generateAsync({ type: "blob" });
+    const zipUrl = URL.createObjectURL(zipBlob);
+
+    const link = document.createElement("a");
+    link.href = zipUrl;
+    link.download = "generated_variants.zip";
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    URL.revokeObjectURL(zipUrl);
+  }
+
   return (
     <div className="page">
+      {/* Top bar */}
       <header className="topbar">
         <div>
           <h1 className="title">AI Image Colorizer</h1>
           <p className="subtitle">
-            Upload a photo, choose a preset, preview variants, download what you
-            like.
+            Upload a photo, choose a preset, preview variants, download what you like.
           </p>
         </div>
 
@@ -94,22 +156,21 @@ export default function App() {
         </div>
       </header>
 
+      {/* Main grid */}
       <main className="grid">
-        {/* Left: Controls */}
+        {/* Workspace */}
         <section className="card">
           <h2 className="cardTitle">Workspace</h2>
 
           <div className="controlGroup">
             <label className="label">Upload image</label>
-
             <label className="fileBox">
               <input
                 type="file"
                 accept="image/png,image/jpeg,image/webp"
                 disabled={loading}
-                onChange={(e) => {
-                  const selected = e.target.files?.[0] || null;
-                  setFile(selected);
+                onChange={e => {
+                  setFile(e.target.files?.[0] || null);
                   setOriginalUrl("");
                   setVariants([]);
                   setMsg("");
@@ -119,7 +180,7 @@ export default function App() {
                 <div className="fileIcon">📷</div>
                 <div className="fileText">
                   <div className="fileName">{selectedFileName}</div>
-                  <div className="fileHint">PNG, JPG, JPEG, WEBP</div>
+                  <div className="fileHint">PNG, JPG, WEBP</div>
                 </div>
               </div>
             </label>
@@ -130,8 +191,8 @@ export default function App() {
             <select
               className="select"
               value={mode}
-              onChange={(e) => setMode(e.target.value)}
               disabled={loading}
+              onChange={e => setMode(e.target.value)}
             >
               <option value="enhance">Enhance Only</option>
               <option value="colorize">Colorize Only</option>
@@ -145,14 +206,7 @@ export default function App() {
               onClick={handleUpload}
               disabled={loading}
             >
-              {loading ? (
-                <span className="btnRow">
-                  <span className="spinner" />
-                  Processing...
-                </span>
-              ) : (
-                "Generate Variants"
-              )}
+              {loading ? "Processing..." : "Generate Variants"}
             </button>
 
             <button
@@ -170,22 +224,22 @@ export default function App() {
             <div className="tipTitle">Tips</div>
             <ul>
               <li>Old or faded photos work best.</li>
-              <li>Use “Both” for enhanced color + sharpness.</li>
+              <li>Use “Both” for enhanced color and sharpness.</li>
               <li>Delete clears all server-side files.</li>
             </ul>
           </div>
         </section>
 
-        {/* Right: Preview */}
+        {/* Preview */}
         <section className="card">
           <div className="cardHeaderRow">
             <h2 className="cardTitle">Preview</h2>
             <span className="muted">
-              {variants.length ? "Results ready" : "Waiting for upload"}
+              {variants.length === 0 ? "Waiting for upload" : ""}
             </span>
           </div>
 
-          {!originalUrl && (
+          {variants.length === 0 ? (
             <div className="empty">
               <div className="emptyIcon">🖼️</div>
               <div className="emptyTitle">No image yet</div>
@@ -193,69 +247,68 @@ export default function App() {
                 Upload an image and generate variants to preview them here.
               </div>
             </div>
-          )}
-
-          {originalUrl && (
+          ) : (
             <>
-              <div className="previewBlock">
-                <div className="previewHeader">
-                  <span className="badge">Original</span>
-                  <a
-                    className="link"
-                    href={originalUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Open full
-                  </a>
-                </div>
-                <img
-                  className="image"
-                  src={originalUrl}
-                  alt="original"
-                />
-              </div>
-
               <div className="variantsHeader">
                 <h3 className="variantsTitle">Variants</h3>
+                <button className="btn btnPrimary" onClick={downloadAllAsZip}>
+                  Download All
+                </button>
               </div>
 
               <div className="variantsGrid">
-                {variants.map((url, idx) => (
-                  <div key={url} className="variantCard">
-                    <div className="variantTop">
-                      <span className="badge">Variant {idx + 1}</span>
-                      <div className="variantLinks">
-                        <a
+                {variants.map((url, idx) => {
+                  const progress = downloadProgress[url] ?? null;
+
+                  return (
+                    <div key={url} className="variantCard">
+                      <div className="variantTop">
+                        <span className="badge">{VARIANT_LABELS[idx]}</span>
+                        <button
                           className="link"
-                          href={url}
-                          target="_blank"
-                          rel="noreferrer"
+                          disabled={progress !== null && progress < 100}
+                          onClick={() =>
+                            forceDownloadWithProgress(
+                              url,
+                              `${VARIANT_LABELS[idx]}.jpg`
+                            )
+                          }
                         >
-                          Open
-                        </a>
-                        <a className="link" href={url} download>
                           Download
-                        </a>
+                        </button>
+                      </div>
+
+                      <div className="imageWrapper">
+                        <img
+                          src={url}
+                          alt={VARIANT_LABELS[idx]}
+                          className={
+                            progress !== null && progress < 100
+                              ? "image downloading"
+                              : "image"
+                          }
+                        />
+                        {progress !== null && progress < 100 && (
+                          <div className="progressOverlay">
+                            <div
+                              className="progressFill"
+                              style={{ width: `${progress}%` }}
+                            />
+                          </div>
+                        )}
                       </div>
                     </div>
-
-                    <img
-                      className="image"
-                      src={url}
-                      alt={`variant-${idx + 1}`}
-                    />
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </>
           )}
         </section>
       </main>
 
+      {/* Footer */}
       <footer className="footer">
         <span>Built with FastAPI + React</span>
-        <span className="muted">Portfolio-ready MVP</span>
       </footer>
     </div>
   );
