@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import JSZip from "jszip";
 import "./App.css";
@@ -54,7 +54,6 @@ export default function App() {
   const coloredImages = importsToArray(coloredImports);
 
   const maxSlides = Math.max(bwImages.length, coloredImages.length, 1);
-
   const [carouselIndex, setCarouselIndex] = useState(0);
 
   function nextSlide() {
@@ -64,6 +63,17 @@ export default function App() {
   function prevSlide() {
     setCarouselIndex((prev) => (prev === 0 ? maxSlides - 1 : prev - 1));
   }
+
+  // Auto-rotate carousel
+  useEffect(() => {
+    if (maxSlides <= 1) return;
+
+    const interval = setInterval(() => {
+      setCarouselIndex((prev) => (prev + 1) % maxSlides);
+    }, 4000); // 4 seconds
+
+    return () => clearInterval(interval);
+  }, [maxSlides]);
 
   const selectedFileName = useMemo(
     () => file?.name || "No file selected",
@@ -196,13 +206,11 @@ export default function App() {
 
   return (
     <div className="page">
-      {/* Top bar */}
       <header className="topbar">
         <div>
           <h1 className="title">AI Image Colorizer</h1>
           <p className="subtitle">
-            Upload a photo, choose a preset, preview variants, download what you
-            like.
+            Upload a photo, choose a preset, preview variants, download what you like.
           </p>
         </div>
 
@@ -212,7 +220,6 @@ export default function App() {
         </div>
       </header>
 
-      {/* Main grid */}
       <main className="grid">
         {/* Workspace */}
         <section className="card">
@@ -320,11 +327,7 @@ export default function App() {
                         </button>
                       </div>
 
-                      <img
-                        className="image"
-                        src={url}
-                        alt={VARIANT_LABELS[idx]}
-                      />
+                      <img className="image" src={url} alt={VARIANT_LABELS[idx]} />
 
                       {progress !== undefined && progress < 100 && (
                         <div className="progressOverlay">
@@ -343,7 +346,7 @@ export default function App() {
         </section>
       </main>
 
-      {/* Carousel (showcase-only) */}
+      {/* Carousel */}
       <section className="comparisonCarousel">
         <h2 className="carouselTitle">Before & After Examples</h2>
 
