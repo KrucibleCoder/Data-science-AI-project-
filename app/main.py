@@ -3,13 +3,14 @@ main.py
 ========
 Entry point for the FastAPI backend of the AI Image Colorizer project.
 
-Responsibilities of this file:
+Responsibilities:
 - API setup and configuration
 - CORS configuration for frontend communication
 - Static file serving (uploads / outputs)
 - Image upload and processing routing
-- Feedback collection (NLP-based sentiment analysis)
-- User satisfaction analytics (graph generation)
+- Slider-based user feedback collection
+- NLP sentiment analysis on comments
+- User satisfaction analytics (matplotlib pie chart)
 """
 
 # -----------------------------
@@ -34,7 +35,7 @@ import json
 from app.storage import UPLOAD_DIR, OUTPUT_DIR, clear_storage
 from app.pipeline import process_image
 from app.feedback_nlp import analyze_feedback
-from app.review_analytics import generate_satisfaction_graph
+from app.review_analytics import generate_satisfaction_pie
 
 
 # =============================================================================
@@ -43,7 +44,7 @@ from app.review_analytics import generate_satisfaction_graph
 app = FastAPI(
     title="AI Image Colorizer API",
     description="Backend API for image enhancement, colorization, and user feedback analytics",
-    version="1.0.0"
+    version="1.1.0"
 )
 
 # =============================================================================
@@ -65,15 +66,13 @@ app.add_middleware(
 
 # =============================================================================
 # STATIC FILE SERVING
-# These directories are exposed so the frontend can preview and download images
 # =============================================================================
 app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 app.mount("/outputs", StaticFiles(directory=OUTPUT_DIR), name="outputs")
 
 
 # =============================================================================
-# HEALTH CHECK / ROOT ENDPOINT
-# Used to verify backend is running
+# ROOT / HEALTH CHECK
 # =============================================================================
 @app.get("/")
 def root():
@@ -84,37 +83,26 @@ def root():
 
 
 # =============================================================================
-# IMAGE UPLOAD + PROCESSING ENDPOINT
-# Handles:
-# - image upload
-# - mode selection (enhance | colorize | both)
-# - processing pipeline execution
-# - returning public URLs for generated variants
+# IMAGE UPLOAD + PROCESSING
 # =============================================================================
 @app.post("/api/upload")
 async def upload_image(
     file: UploadFile = File(...),
     mode: str = Query("enhance", description="Processing mode: enhance | colorize | both")
 ):
-    # Validate file extension
     ext = Path(file.filename).suffix.lower()
     if ext not in [".png", ".jpg", ".jpeg", ".webp"]:
         return {
             "error": "Unsupported file type. Use png, jpg, jpeg, or webp."
         }
 
-    # Generate a unique filename to avoid collisions
     unique_name = f"{uuid.uuid4().hex}{ext}"
     save_path = UPLOAD_DIR / unique_name
 
-    # Persist uploaded file to disk
     contents = await file.read()
     save_path.write_bytes(contents)
 
-    # Run processing pipeline based on selected mode
     variant_paths = process_image(save_path, OUTPUT_DIR, mode)
-
-    # Convert filesystem paths into public URLs
     variants = [f"/outputs/{p.name}" for p in variant_paths]
 
     return {
@@ -126,8 +114,7 @@ async def upload_image(
 
 
 # =============================================================================
-# STORAGE CLEANUP ENDPOINT
-# Deletes all uploaded and generated files (privacy + disk cleanup)
+# STORAGE CLEANUP
 # =============================================================================
 @app.delete("/api/delete_all")
 def delete_all():
@@ -138,61 +125,53 @@ def delete_all():
 
 
 # =============================================================================
-# USER FEEDBACK SUBMISSION ENDPOINT
-# Handles:
-# - free-text user feedback
-# - sentiment analysis (TextBlob + NLTK)
-# - private storage of review data (gitignored)
+# SLIDER-BASED USER REVIEW SUBMISSION
+# Matches current React frontend exactly
 # =============================================================================
-@app.post("/api/feedback")
-async def submit_feedback(payload: dict = Body(...)):
+@app.post("/api/reviews")
+async def submit_review(payload: dict = Body(...)):
     """
-    Expected payload structure:
+    Expected payload:
     {
-        "session_id": "...",
-        "best_variant": "...",
-        "worst_variant": "...",
-        "feedback": "user free text"
+        "image": "http://127.0.0.1:8000/outputs/xyz.jpg",
+        "label": "Natural",
+        "score": 78,
+        "comment": "Optional user feedback"
     }
     """
 
-    # Run NLP sentiment analysis on user feedback
-    analysis = analyze_feedback(payload["feedback"])
+    reviews_dir = Path("Reviews")
+    reviews_dir.mkdir(exist_ok=True)
+    reviews_file = reviews_dir / "reviews.jsonl"
 
-    # Construct review record
+    score = max(0, min(100, int(payload.get("score", 0))))
+    label = payload.get("label", "Unknown")
+    comment = payload.get("comment", "")
+
+    sentiment = analyze_feedback(comment)
+
     record = {
-        "session_id": payload["session_id"],
-        "best_variant": payload["best_variant"],
-        "worst_variant": payload["worst_variant"],
-        "feedback": payload["feedback"],
-        "sentiment": analysis,
+        "label": label,
+        "score": score,
+        "sentiment": sentiment,
         "timestamp": datetime.utcnow().isoformat()
     }
 
-    # Ensure Reviews directory exists (tracked, but data ignored)
-    reviews_dir = Path("Reviews")
-    reviews_dir.mkdir(exist_ok=True)
-
-    # Append review as JSON Lines (safe for incremental writes)
-    with open(reviews_dir / "reviews.jsonl", "a", encoding="utf-8") as f:
+    with open(reviews_file, "a", encoding="utf-8") as f:
         f.write(json.dumps(record) + "\n")
 
     return {
-        "message": "Feedback stored successfully",
-        "sentiment": analysis
+        "message": "Review recorded",
+        "sentiment": sentiment
     }
 
 
 # =============================================================================
-# USER SATISFACTION ANALYTICS ENDPOINT
-# Returns:
-# - PNG image generated by matplotlib
-# - demo data if no real reviews exist
-# Frontend simply displays this image
+# USER SATISFACTION ANALYTICS (PIE CHART)
 # =============================================================================
 @app.get("/api/reviews/summary")
 def review_summary():
-    image_bytes = generate_satisfaction_graph()
+    image_bytes = generate_satisfaction_pie()
     return Response(
         content=image_bytes,
         media_type="image/png"
@@ -200,8 +179,7 @@ def review_summary():
 
 
 # =============================================================================
-# DIRECT EXECUTION ENTRY POINT
-# Required for PyInstaller / EXE builds
+# DIRECT EXECUTION (FOR EXE BUILDS)
 # =============================================================================
 if __name__ == "__main__":
     import uvicorn

@@ -5,8 +5,14 @@ from nltk.tokenize import word_tokenize
 
 STOP_WORDS = set(stopwords.words("english"))
 
-
 def analyze_feedback(text: str) -> dict:
+    if not text.strip():
+        return {
+            "polarity": 0.0,
+            "subjectivity": 0.0,
+            "keywords": []
+        }
+
     blob = TextBlob(text)
 
     polarity = blob.sentiment.polarity
@@ -14,8 +20,8 @@ def analyze_feedback(text: str) -> dict:
 
     tokens = word_tokenize(text.lower())
     keywords = [
-        w for w in tokens
-        if w.isalpha() and w not in STOP_WORDS
+        t for t in tokens
+        if t.isalpha() and t not in STOP_WORDS
     ]
 
     return {
