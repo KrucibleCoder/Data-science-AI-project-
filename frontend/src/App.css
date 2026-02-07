@@ -1,4 +1,8 @@
 /* ============================================================
+   MERGED STYLES — prefer user-provided styles for common components
+   ============================================================ */
+
+/* ============================================================
    GLOBAL PAGE LAYOUT
    ============================================================ */
 
@@ -7,27 +11,26 @@
   padding: 28px;
   box-sizing: border-box;
   color: #eaeaf1;
-
-  /* Layered gradient background for depth */
   background:
-    radial-gradient(1200px 800px at 10% 10%, #2a2a55 0%, rgba(0, 0, 0, 0) 60%),
-    radial-gradient(1200px 800px at 90% 30%, #214d4a 0%, rgba(0, 0, 0, 0) 60%),
+    radial-gradient(1200px 800px at 10% 10%, #2a2a55 0%, rgba(0,0,0,0) 60%),
+    radial-gradient(1200px 800px at 90% 30%, #214d4a 0%, rgba(0,0,0,0) 60%),
     linear-gradient(180deg, #0b0b12 0%, #07070c 100%);
 }
 
 /* ============================================================
-   TOP BAR (TITLE + STATUS CHIP)
+   TOP BAR
    ============================================================ */
 
 .topbar {
   max-width: 1100px;
-  margin: 0 auto 18px auto;
+  margin: 0 auto 18px;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
 }
 
+/* optional title/subtitle (from uploaded file — non-conflicting) */
 .title {
   margin: 0;
   font-size: 34px;
@@ -41,7 +44,7 @@
 }
 
 /* ============================================================
-   MAIN GRID LAYOUT (WORKSPACE + PREVIEW)
+   MAIN GRID (WORKSPACE + PREVIEW)
    ============================================================ */
 
 .grid {
@@ -52,32 +55,26 @@
   gap: 16px;
 }
 
-/* Stack panels on smaller screens */
 @media (max-width: 900px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
+  .grid { grid-template-columns: 1fr; }
 }
 
 /* ============================================================
-   CARD CONTAINERS
+   CARD, BUTTONS, FORM CONTROLS (user-provided rules preferred)
    ============================================================ */
 
 .card {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
   border-radius: 18px;
   padding: 16px;
   backdrop-filter: blur(10px);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.35);
 }
 
-.cardTitle {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 650;
-}
+.cardTitle { margin: 0; font-size: 18px; font-weight: 650; }
 
+/* additional header row utilities (non-conflicting from uploaded file) */
 .cardHeaderRow {
   display: flex;
   align-items: baseline;
@@ -91,13 +88,8 @@
   font-size: 12px;
 }
 
-/* ============================================================
-   FORM CONTROLS
-   ============================================================ */
-
-.controlGroup {
-  margin-top: 14px;
-}
+/* form groups and selects (from uploaded file) */
+.controlGroup { margin-top: 14px; }
 
 .label {
   display: block;
@@ -124,7 +116,7 @@
 }
 
 /* ============================================================
-   FILE INPUT (CUSTOM DROP ZONE STYLE)
+   FILE INPUT / DROP ZONE
    ============================================================ */
 
 .fileBox {
@@ -143,60 +135,26 @@
   border-color: rgba(130, 185, 255, 0.6);
 }
 
-.fileBox input {
-  display: none;
-}
+.fileBox input { display: none; }
 
-.fileBoxInner {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  padding: 12px;
-}
-
-.fileIcon {
-  width: 42px;
-  height: 42px;
-  border-radius: 14px;
-  background: rgba(130, 185, 255, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-}
-
-.fileText {
-  text-align: left;
-}
-
-.fileName {
-  font-size: 14px;
-  font-weight: 650;
-}
-
-.fileHint {
-  font-size: 12px;
-  color: rgba(234, 234, 241, 0.65);
-  margin-top: 2px;
-}
+/* keep user's inner layout for file box (preferred) */
+.fileBoxInner { display: flex; gap: 12px; align-items: center; padding: 12px; }
+.fileIcon { width: 42px; height: 42px; border-radius: 14px; display:flex; align-items:center; justify-content:center; }
+.fileText { display: flex; flex-direction: column; justify-content: center; }
+.fileName { font-size: 14px; font-weight: 650; margin: 0; }
+.fileHint { font-size: 12px; color: rgba(234,234,241,0.65); margin-top: 2px; }
 
 /* ============================================================
-   BUTTONS
+   BUTTONS (base from user, extras from uploaded file)
    ============================================================ */
 
-.actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 14px;
-}
+.actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
 
-/* Base button style (used for form actions) */
 .btn {
   width: 100%;
   padding: 10px 12px;
   border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255,255,255,0.14);
   cursor: pointer;
   font-weight: 650;
   transition:
@@ -209,7 +167,11 @@
   cursor: not-allowed;
 }
 
-/* Primary CTA */
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+/* Primary and destructive variants (from uploaded file — additive) */
 .btnPrimary {
   background: linear-gradient(
     135deg,
@@ -220,29 +182,18 @@
   border: none;
 }
 
-/* Destructive / secondary action */
 .btnDanger {
   background: rgba(255, 255, 255, 0.06);
   color: #eaeaf1;
 }
 
-.btn:hover:not(:disabled) {
-  transform: translateY(-1px);
-}
-
-/* Compact button for header toolbars (e.g. Download All) */
-.btnSmall {
-  width: auto;
-  padding: 6px 14px;
-  font-size: 12px;
-  border-radius: 999px;
-}
+/* Compact button for header toolbars */
+.btnSmall { width: auto; padding: 6px 14px; font-size: 12px; border-radius: 999px; }
 
 /* ============================================================
-   LINK-STYLE BUTTONS (used for per-image Download)
+   LINK-STYLE BUTTONS
    ============================================================ */
 
-/* Normalize <button class="link"> to behave like text links */
 .link {
   font-size: 12px;
   color: rgba(145, 255, 210, 0.9);
@@ -257,9 +208,7 @@ button.link {
 }
 
 button.link:hover:not(:disabled),
-a.link:hover {
-  text-decoration: underline;
-}
+a.link:hover { text-decoration: underline; }
 
 button.link:disabled {
   opacity: 0.5;
@@ -267,7 +216,7 @@ button.link:disabled {
 }
 
 /* ============================================================
-   MESSAGES / FEEDBACK
+   MESSAGES / TIPS / FOOTER (from uploaded file, non-conflicting)
    ============================================================ */
 
 .message {
@@ -279,27 +228,47 @@ button.link:disabled {
   text-align: left;
 }
 
-/* ============================================================
-   TIPS SECTION
-   ============================================================ */
-
 .tips {
   margin-top: 14px;
   padding-top: 14px;
   border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-.tipTitle {
-  font-weight: 650;
-  margin-bottom: 8px;
-  text-align: left;
-}
+.tipTitle { font-weight: 650; margin-bottom: 8px; text-align: left; }
 
 .tips ul {
   margin: 0;
   padding-left: 18px;
   color: rgba(234, 234, 241, 0.75);
   text-align: left;
+}
+
+.footer {
+  max-width: 1100px;
+  margin: 14px auto 0;
+  display: flex;
+  justify-content: space-between;
+  color: rgba(234, 234, 241, 0.6);
+  font-size: 12px;
+}
+
+/* status chip (uploaded file) */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  height: fit-content;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(145, 255, 210, 0.95);
 }
 
 /* ============================================================
@@ -315,11 +284,7 @@ button.link:disabled {
   border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-.image {
-  width: 100%;
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-}
+.image { width: 100%; border-radius: 14px; border: 1px solid rgba(255,255,255,0.12); }
 
 .variantsHeader {
   display: flex;
@@ -357,15 +322,6 @@ button.link:disabled {
   gap: 10px;
 }
 
-.badge {
-  align-self: flex-start;
-  display: inline-flex;
-  padding: 4px 10px;
-  margin: 5px 0;
-  border-radius: 999px;
-  white-space: nowrap;
-}
-
 /* ============================================================
    EMPTY STATE
    ============================================================ */
@@ -378,296 +334,242 @@ button.link:disabled {
   background: rgba(12, 12, 20, 0.35);
 }
 
-.emptyIcon {
-  font-size: 28px;
-  margin-bottom: 8px;
-}
-
-.emptyTitle {
-  font-weight: 700;
-  margin-bottom: 6px;
-}
-
-.emptyText {
-  color: rgba(234, 234, 241, 0.7);
-  font-size: 13px;
-}
+.emptyIcon { font-size: 28px; margin-bottom: 8px; }
+.emptyTitle { font-weight: 700; margin-bottom: 6px; }
+.emptyText { color: rgba(234, 234, 241, 0.7); font-size: 13px; }
 
 /* ============================================================
-   FOOTER
+   DOWNLOAD GRID (user-provided)
    ============================================================ */
 
-.footer {
-  max-width: 1100px;
-  margin: 14px auto 0 auto;
+.downloadGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 14px;
+  align-items: start;
+}
+
+.downloadCard {
+  background: rgba(12,12,20,0.6);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 10px;
   display: flex;
-  justify-content: space-between;
-  color: rgba(234, 234, 241, 0.6);
+  flex-direction: column;
+  gap: 8px;
+  align-items: stretch;
+  min-height: 220px;
+}
+
+.downloadTop {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.downloadTop .btnSmall { padding: 6px 12px; font-size: 12px; border-radius: 999px; }
+
+.thumbWrapper {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(12,12,20,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.thumb {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+}
+
+.downloadLabel {
+  margin-top: 6px;
   font-size: 12px;
+  text-align: center;
+  color: rgba(234,234,241,0.7);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 520px) {
+  .downloadGrid { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
 }
 
 /* ============================================================
-   STATUS CHIP (TOP RIGHT)
+   PROGRESS OVERLAY (user-provided)
    ============================================================ */
 
-.chip {
-  display: inline-flex;
+.imageWrapper { position: relative; }
+.image.downloading { filter: grayscale(100%) brightness(0.6); }
+.progressOverlay { position: absolute; inset: 0; background: rgba(0,0,0,0.35); }
+.progressFill { height: 100%; background: rgba(145,255,210,0.5); }
+
+/* ============================================================
+   FEEDBACK PANEL (user-provided)
+   ============================================================ */
+
+.feedbackGrid { display: flex; flex-direction: column; gap: 10px; }
+
+.feedbackRow {
+  background: rgba(12,12,20,0.6);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  padding: 8px;
+  display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 10px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  height: fit-content;
 }
 
-.dot {
-  width: 8px;
-  height: 8px;
+.feedbackLabel { width: 96px; font-size: 13px; color: rgba(234,234,241,0.9); font-weight: 600; }
+
+.feedbackSliderRow { display: flex; align-items: center; gap: 8px; flex: 1; }
+
+.feedbackSliderRow input[type="range"] {
+  flex: 1;
+  appearance: none;
+  height: 6px;
   border-radius: 999px;
-  background: rgba(145, 255, 210, 0.95);
+  background: linear-gradient(90deg, rgba(145,255,210,0.25), rgba(130,185,255,0.18));
+  outline: none;
+}
+
+.feedbackSliderRow input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.6);
+  border: 2px solid rgba(234,234,241,0.9);
+  cursor: pointer;
+}
+
+.sliderValue { min-width: 42px; text-align: right; font-size: 12px; color: rgba(234,234,241,0.75); }
+
+.feedbackComment {
+  width: 100%;
+  min-height: 88px;
+  border-radius: 10px;
+  padding: 10px;
+  background: rgba(12,12,20,0.6);
+  color: #eaeaf1;
+  border: 1px solid rgba(255,255,255,0.06);
+  resize: vertical;
 }
 
 /* ============================================================
-   DOWNLOAD PROGRESS OVERLAY (EPIC-STYLE)
-   ============================================================ */
-
-.imageWrapper {
-  position: relative;
-}
-
-.image.downloading {
-  filter: grayscale(100%) brightness(0.6);
-}
-
-.progressOverlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.35);
-}
-
-.progressFill {
-  height: 100%;
-  background: rgba(145, 255, 210, 0.5);
-}
-
-/* ============================================================
-   COMPARISON + FEEDBACK SECTION (SIDE BY SIDE)
+   COMPARISON CAROUSEL AND REVIEW SHELLS (glass look — user-preferred)
    ============================================================ */
 
 .comparisonAndReviews {
   max-width: 1400px;
-  margin: 80px auto 0 auto;
+  margin: 40px auto 0;
   padding: 0 16px;
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 1.4fr 1.6fr;
   gap: 32px;
   align-items: start;
 }
 
-/* Stack on smaller screens */
 @media (max-width: 1100px) {
-  .comparisonAndReviews {
-    grid-template-columns: 1fr;
-  }
+  .comparisonAndReviews { grid-template-columns: 1fr; }
 }
-
-/* ============================================================
-   CAROUSEL SHELL (GLASS CONTAINER)
-   ============================================================ */
 
 .comparisonCarousel {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.14);
   border-radius: 22px;
-  padding: 22px;
+  padding: 20px;
   backdrop-filter: blur(12px);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.35);
 }
 
-/* Title */
-.carouselTitle {
-  margin-bottom: 18px;
-  font-size: 20px;
-  font-weight: 650;
-  color: rgba(234, 234, 241, 0.95);
-  text-align: left;
-}
+.carouselTitle { margin-bottom: 14px; font-size: 20px; font-weight: 650; color: rgba(234,234,241,0.95); }
 
-/* ============================================================
-   CAROUSEL ROW
-   ============================================================ */
+.carouselRow { display: grid; grid-template-columns: 1fr; gap: 14px; }
 
-.carouselRow {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-
-/* Stack images vertically on small screens */
-@media (max-width: 900px) {
-  .carouselRow {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ============================================================
-   IMAGE BLOCK (FIXED HEIGHT, NO LAYOUT JUMP)
-   ============================================================ */
-
+/* carousel image block (kept the reduced height from uploaded file) */
 .carouselImageBlock {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-
-  background: rgba(12, 12, 20, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  gap: 6px;
+  height: 420px;
+  padding: 10px;
+  background: rgba(12,12,20,0.6);
+  border: 1px solid rgba(255,255,255,0.12);
   border-radius: 18px;
-  padding: 12px;
-
-  height: 320px; /* 🔒 LOCKED HEIGHT */
   overflow: hidden;
 }
 
-/* Label */
-.carouselImageBlock span {
-  font-size: 12px;
-  color: rgba(234, 234, 241, 0.75);
-  text-align: center;
-}
+.carouselImageBlock span { font-size: 12px; color: rgba(234,234,241,0.75); text-align: center; }
 
-/* Image */
-.carouselImageBlock img {
-  flex: 1;
-  width: 100%;
-  object-fit: cover;
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(12, 12, 20, 0.8);
-}
+.carouselImageBlock img { flex: 1; width: 100%; object-fit: contain; background: rgba(12,12,20,0.8); border-radius: 14px; border: 1px solid rgba(255,255,255,0.12); }
 
-/* ============================================================
-   CAROUSEL CONTROLS
-   ============================================================ */
-
+/* carousel controls (from uploaded file — additive) */
 .carouselControls {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 18px;
-  margin-top: 16px;
+  margin-top: 12px;
 }
 
 .carouselControls button {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  color: rgba(234, 234, 241, 0.85);
+  width: 34px;
+  height: 34px;
   border-radius: 999px;
-  width: 36px;
-  height: 36px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.18);
+  color: rgba(234, 234, 241, 0.85);
   cursor: pointer;
   font-size: 14px;
   transition: background 120ms ease, transform 120ms ease;
 }
 
-.carouselControls button:hover {
-  background: rgba(145, 255, 210, 0.25);
-  transform: translateY(-1px);
-}
+.carouselControls button:hover { background: rgba(145,255,210,0.25); transform: translateY(-1px); }
 
-.carouselControls span {
-  font-size: 12px;
-  color: rgba(234, 234, 241, 0.65);
-  min-width: 60px;
-  text-align: center;
-}
+.carouselControls span { min-width: 60px; text-align: center; font-size: 12px; color: rgba(234,234,241,0.65); }
 
-/* =========================
-   Responsive fallback
-   ========================= */
-
-@media (max-width: 1100px) {
-  .comparisonAndReviews {
-    grid-template-columns: 1fr;
-  }
-
-  .reviewPanel {
-    position: relative;
-    top: auto;
-  }
-}
-
-
-/* =========================
-   Responsive
-   ========================= */
-
-@media (max-width: 900px) {
-  .carouselRow {
-    grid-template-columns: 1fr;
-  }
-
-  .carouselImageBlock img {
-    height: 220px;
-  }
-}
-
-/* ============================================================
-   REVIEW PANEL (GLASS SHELL – MATCHES CAROUSEL)
-   ============================================================ */
-
+/* review panel glass (user preferred sizing + look) */
 .reviewPanel {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.14);
   border-radius: 22px;
   padding: 22px;
   backdrop-filter: blur(12px);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+  display: flex;
+  flex-direction: column;
 }
 
-/* Title */
-.reviewTitle {
-  font-size: 20px;
-  font-weight: 650;
-  color: rgba(234, 234, 241, 0.95);
-  margin-bottom: 6px;
-}
+.reviewTitle { font-size: 20px; font-weight: 650; color: rgba(234,234,241,0.95); margin-bottom: 6px; }
+.reviewSubtitle { font-size: 13px; color: rgba(234,234,241,0.65); margin-bottom: 16px; }
 
-/* Subtitle */
-.reviewSubtitle {
-  font-size: 13px;
-  color: rgba(234, 234, 241, 0.65);
-  margin-bottom: 16px;
-}
-
-/* Inner glass wrapper for the graph */
 .reviewGlass {
-  background: rgba(12, 12, 20, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(12,12,20,0.6);
+  border: 1px solid rgba(255,255,255,0.12);
   border-radius: 18px;
   padding: 12px;
 }
 
-/* Graph container */
 .reviewGraphWrapper {
   width: 100%;
-  background: rgba(12, 12, 20, 0.8);
-  border-radius: 14px;
   padding: 12px;
+  background: rgba(12,12,20,0.8);
+  border-radius: 14px;
 }
 
-/* Graph image */
-.reviewGraphWrapper img {
-  width: 100%;
-  height: auto;
-  border-radius: 12px;
-  display: block;
-}
+.reviewGraphWrapper img { width: 100%; height: auto; display: block; border-radius: 12px; }
 
-/* Footer note */
-.reviewNote {
-  margin-top: 12px;
-  font-size: 11px;
-  color: rgba(234, 234, 241, 0.55);
-  text-align: center;
+.reviewNote { margin-top: 12px; font-size: 11px; color: rgba(234,234,241,0.55); text-align: center; }
+
+/* small screens adjustments */
+@media (max-width: 900px) {
+  .downloadGrid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+  .carouselImageBlock { height: 320px; }
 }
