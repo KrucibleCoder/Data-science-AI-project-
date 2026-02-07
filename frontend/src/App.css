@@ -15,7 +15,6 @@
     linear-gradient(180deg, #0b0b12 0%, #07070c 100%);
 }
 
-
 /* ============================================================
    TOP BAR (TITLE + STATUS CHIP)
    ============================================================ */
@@ -41,7 +40,6 @@
   max-width: 720px;
 }
 
-
 /* ============================================================
    MAIN GRID LAYOUT (WORKSPACE + PREVIEW)
    ============================================================ */
@@ -60,7 +58,6 @@
     grid-template-columns: 1fr;
   }
 }
-
 
 /* ============================================================
    CARD CONTAINERS
@@ -94,7 +91,6 @@
   font-size: 12px;
 }
 
-
 /* ============================================================
    FORM CONTROLS
    ============================================================ */
@@ -127,7 +123,6 @@
   box-shadow: 0 0 0 4px rgba(130, 185, 255, 0.18);
 }
 
-
 /* ============================================================
    FILE INPUT (CUSTOM DROP ZONE STYLE)
    ============================================================ */
@@ -138,7 +133,9 @@
   border-radius: 16px;
   border: 1px dashed rgba(255, 255, 255, 0.18);
   background: rgba(12, 12, 20, 0.4);
-  transition: transform 120ms ease, border-color 120ms ease;
+  transition:
+    transform 120ms ease,
+    border-color 120ms ease;
 }
 
 .fileBox:hover {
@@ -183,7 +180,6 @@
   margin-top: 2px;
 }
 
-
 /* ============================================================
    BUTTONS
    ============================================================ */
@@ -203,7 +199,9 @@
   border: 1px solid rgba(255, 255, 255, 0.14);
   cursor: pointer;
   font-weight: 650;
-  transition: transform 120ms ease, opacity 120ms ease;
+  transition:
+    transform 120ms ease,
+    opacity 120ms ease;
 }
 
 .btn:disabled {
@@ -240,7 +238,6 @@
   border-radius: 999px;
 }
 
-
 /* ============================================================
    LINK-STYLE BUTTONS (used for per-image Download)
    ============================================================ */
@@ -269,7 +266,6 @@ button.link:disabled {
   cursor: not-allowed;
 }
 
-
 /* ============================================================
    MESSAGES / FEEDBACK
    ============================================================ */
@@ -282,7 +278,6 @@ button.link:disabled {
   border: 1px solid rgba(130, 185, 255, 0.22);
   text-align: left;
 }
-
 
 /* ============================================================
    TIPS SECTION
@@ -306,7 +301,6 @@ button.link:disabled {
   color: rgba(234, 234, 241, 0.75);
   text-align: left;
 }
-
 
 /* ============================================================
    PREVIEW + VARIANTS
@@ -399,7 +393,6 @@ button.link:disabled {
   font-size: 13px;
 }
 
-
 /* ============================================================
    FOOTER
    ============================================================ */
@@ -412,7 +405,6 @@ button.link:disabled {
   color: rgba(234, 234, 241, 0.6);
   font-size: 12px;
 }
-
 
 /* ============================================================
    STATUS CHIP (TOP RIGHT)
@@ -435,7 +427,6 @@ button.link:disabled {
   border-radius: 999px;
   background: rgba(145, 255, 210, 0.95);
 }
-
 
 /* ============================================================
    DOWNLOAD PROGRESS OVERLAY (EPIC-STYLE)
@@ -495,7 +486,9 @@ button.link:disabled {
   padding: 12px;
   backdrop-filter: blur(10px);
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
-  transition: transform 180ms ease, box-shadow 180ms ease;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease;
 }
 
 .carouselImageBlock:hover {
@@ -540,7 +533,9 @@ button.link:disabled {
   height: 36px;
   cursor: pointer;
   font-size: 14px;
-  transition: background 120ms ease, transform 120ms ease;
+  transition:
+    background 120ms ease,
+    transform 120ms ease;
 }
 
 .carouselControls button:hover {

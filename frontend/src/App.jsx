@@ -9,11 +9,11 @@ import "./App.css";
 
 const bwImports = import.meta.glob(
   "./assets/Carousel/Original/*.{png,jpg,jpeg,webp}",
-  { eager: true }
+  { eager: true },
 );
 const coloredImports = import.meta.glob(
   "./assets/Carousel/Colored/*.{png,jpg,jpeg,webp}",
-  { eager: true }
+  { eager: true },
 );
 
 function importsToArray(imports) {
@@ -53,11 +53,7 @@ export default function App() {
   const bwImages = importsToArray(bwImports);
   const coloredImages = importsToArray(coloredImports);
 
-  const maxSlides = Math.max(
-    bwImages.length,
-    coloredImages.length,
-    1
-  );
+  const maxSlides = Math.max(bwImages.length, coloredImages.length, 1);
 
   const [carouselIndex, setCarouselIndex] = useState(0);
 
@@ -66,14 +62,12 @@ export default function App() {
   }
 
   function prevSlide() {
-    setCarouselIndex((prev) =>
-      prev === 0 ? maxSlides - 1 : prev - 1
-    );
+    setCarouselIndex((prev) => (prev === 0 ? maxSlides - 1 : prev - 1));
   }
 
   const selectedFileName = useMemo(
     () => file?.name || "No file selected",
-    [file]
+    [file],
   );
 
   /* =========================
@@ -103,7 +97,7 @@ export default function App() {
       const res = await axios.post(
         `${API_BASE}/api/upload?mode=${mode}`,
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        { headers: { "Content-Type": "multipart/form-data" } },
       );
 
       setOriginalUrl(`${API_BASE}${res.data.original}`);
@@ -120,7 +114,7 @@ export default function App() {
 
   async function handleDeleteAll() {
     const confirmed = window.confirm(
-      "Are you sure you want to delete all generated images?\n\nThis action cannot be undone."
+      "Are you sure you want to delete all generated images?\n\nThis action cannot be undone.",
     );
     if (!confirmed) return;
 
@@ -207,7 +201,8 @@ export default function App() {
         <div>
           <h1 className="title">AI Image Colorizer</h1>
           <p className="subtitle">
-            Upload a photo, choose a preset, preview variants, download what you like.
+            Upload a photo, choose a preset, preview variants, download what you
+            like.
           </p>
         </div>
 
@@ -317,7 +312,7 @@ export default function App() {
                           onClick={() =>
                             forceDownloadWithProgress(
                               url,
-                              `${VARIANT_LABELS[idx]}.jpg`
+                              `${VARIANT_LABELS[idx]}.jpg`,
                             )
                           }
                         >
