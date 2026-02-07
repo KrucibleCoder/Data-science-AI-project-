@@ -451,77 +451,111 @@ button.link:disabled {
   background: rgba(145, 255, 210, 0.5);
 }
 
-/* =========================
-   Comparison Carousel
-   ========================= */
+/* ============================================================
+   COMPARISON + FEEDBACK SECTION (SIDE BY SIDE)
+   ============================================================ */
+
+.comparisonAndReviews {
+  max-width: 1400px;
+  margin: 80px auto 0 auto;
+  padding: 0 16px;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+/* Stack on smaller screens */
+@media (max-width: 1100px) {
+  .comparisonAndReviews {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================
+   CAROUSEL SHELL (GLASS CONTAINER)
+   ============================================================ */
 
 .comparisonCarousel {
-  max-width: 1100px;
-  margin: 64px auto 0 auto;
-  padding: 0 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 22px;
+  padding: 22px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
 }
 
+/* Title */
 .carouselTitle {
-  margin-bottom: 24px;
-  font-size: 22px;
+  margin-bottom: 18px;
+  font-size: 20px;
   font-weight: 650;
   color: rgba(234, 234, 241, 0.95);
-  text-align: center;
+  text-align: left;
 }
 
-/* Each row = one comparison layer */
+/* ============================================================
+   CAROUSEL ROW
+   ============================================================ */
+
 .carouselRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
-  margin-bottom: 20px;
 }
 
-/* Individual image block */
+/* Stack images vertically on small screens */
+@media (max-width: 900px) {
+  .carouselRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================
+   IMAGE BLOCK (FIXED HEIGHT, NO LAYOUT JUMP)
+   ============================================================ */
+
 .carouselImageBlock {
-  position: relative;
-  background: rgba(255, 255, 255, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  background: rgba(12, 12, 20, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 20px;
+  border-radius: 18px;
   padding: 12px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
-  transition:
-    transform 180ms ease,
-    box-shadow 180ms ease;
+
+  height: 320px; /* 🔒 LOCKED HEIGHT */
+  overflow: hidden;
 }
 
-.carouselImageBlock:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.45);
-}
-
-/* Label inside block */
+/* Label */
 .carouselImageBlock span {
-  display: block;
-  margin-bottom: 8px;
   font-size: 12px;
   color: rgba(234, 234, 241, 0.75);
   text-align: center;
 }
 
-/* Images */
+/* Image */
 .carouselImageBlock img {
+  flex: 1;
   width: 100%;
-  height: 240px;
   object-fit: cover;
   border-radius: 14px;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(12, 12, 20, 0.6);
+  background: rgba(12, 12, 20, 0.8);
 }
 
-/* Controls */
+/* ============================================================
+   CAROUSEL CONTROLS
+   ============================================================ */
+
 .carouselControls {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 18px;
-  margin-top: 12px;
+  margin-top: 16px;
 }
 
 .carouselControls button {
@@ -533,9 +567,7 @@ button.link:disabled {
   height: 36px;
   cursor: pointer;
   font-size: 14px;
-  transition:
-    background 120ms ease,
-    transform 120ms ease;
+  transition: background 120ms ease, transform 120ms ease;
 }
 
 .carouselControls button:hover {
@@ -551,6 +583,22 @@ button.link:disabled {
 }
 
 /* =========================
+   Responsive fallback
+   ========================= */
+
+@media (max-width: 1100px) {
+  .comparisonAndReviews {
+    grid-template-columns: 1fr;
+  }
+
+  .reviewPanel {
+    position: relative;
+    top: auto;
+  }
+}
+
+
+/* =========================
    Responsive
    ========================= */
 
@@ -562,4 +610,64 @@ button.link:disabled {
   .carouselImageBlock img {
     height: 220px;
   }
+}
+
+/* ============================================================
+   REVIEW PANEL (GLASS SHELL – MATCHES CAROUSEL)
+   ============================================================ */
+
+.reviewPanel {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 22px;
+  padding: 22px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+}
+
+/* Title */
+.reviewTitle {
+  font-size: 20px;
+  font-weight: 650;
+  color: rgba(234, 234, 241, 0.95);
+  margin-bottom: 6px;
+}
+
+/* Subtitle */
+.reviewSubtitle {
+  font-size: 13px;
+  color: rgba(234, 234, 241, 0.65);
+  margin-bottom: 16px;
+}
+
+/* Inner glass wrapper for the graph */
+.reviewGlass {
+  background: rgba(12, 12, 20, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  padding: 12px;
+}
+
+/* Graph container */
+.reviewGraphWrapper {
+  width: 100%;
+  background: rgba(12, 12, 20, 0.8);
+  border-radius: 14px;
+  padding: 12px;
+}
+
+/* Graph image */
+.reviewGraphWrapper img {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  display: block;
+}
+
+/* Footer note */
+.reviewNote {
+  margin-top: 12px;
+  font-size: 11px;
+  color: rgba(234, 234, 241, 0.55);
+  text-align: center;
 }
