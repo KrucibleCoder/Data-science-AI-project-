@@ -8,19 +8,11 @@ import "./App.css";
    ========================= */
 
 const bwImports = import.meta.glob(
-  "./assets/Carousel/OriginalB/*.{png,jpg,jpeg,webp}",
+  "./assets/Carousel/Original/*.{png,jpg,jpeg,webp}",
   { eager: true }
 );
 const coloredImports = import.meta.glob(
   "./assets/Carousel/Colored/*.{png,jpg,jpeg,webp}",
-  { eager: true }
-);
-const originalCImports = import.meta.glob(
-  "./assets/Carousel/OriginalC/*.{png,jpg,jpeg,webp}",
-  { eager: true }
-);
-const enhancedImports = import.meta.glob(
-  "./assets/Carousel/Enhanced/*.{png,jpg,jpeg,webp}",
   { eager: true }
 );
 
@@ -60,14 +52,10 @@ export default function App() {
 
   const bwImages = importsToArray(bwImports);
   const coloredImages = importsToArray(coloredImports);
-  const originalCImages = importsToArray(originalCImports);
-  const enhancedImages = importsToArray(enhancedImports);
 
   const maxSlides = Math.max(
     bwImages.length,
     coloredImages.length,
-    originalCImages.length,
-    enhancedImages.length,
     1
   );
 
@@ -360,7 +348,7 @@ export default function App() {
         </section>
       </main>
 
-      {/* Carousel (separate, showcase-only) */}
+      {/* Carousel (showcase-only) */}
       <section className="comparisonCarousel">
         <h2 className="carouselTitle">Before & After Examples</h2>
 
@@ -375,17 +363,6 @@ export default function App() {
           </div>
         </div>
 
-        <div className="carouselRow">
-          <div className="carouselImageBlock">
-            <span>Original Color</span>
-            <img src={originalCImages[carouselIndex] || PLACEHOLDER} />
-          </div>
-          <div className="carouselImageBlock">
-            <span>Enhanced</span>
-            <img src={enhancedImages[carouselIndex] || PLACEHOLDER} />
-          </div>
-        </div>
-
         <div className="carouselControls">
           <button onClick={prevSlide}>◀</button>
           <span>
@@ -397,7 +374,6 @@ export default function App() {
 
       <footer className="footer">
         <span>Built with FastAPI + React</span>
-        <span>Portfolio-ready MVP</span>
       </footer>
     </div>
   );
