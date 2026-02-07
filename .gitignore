@@ -19,3 +19,7 @@ frontend/node_modules/
 
 # Other ignorable files
 /model archives
+
+# Reviews
+Reviews/*
+!Reviews/.gitkeep
