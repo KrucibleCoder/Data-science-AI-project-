@@ -9,11 +9,11 @@ import "./App.css";
 
 const bwImports = import.meta.glob(
   "./assets/Carousel/Original/*.{png,jpg,jpeg,webp}",
-  { eager: true }
+  { eager: true },
 );
 const coloredImports = import.meta.glob(
   "./assets/Carousel/Colored/*.{png,jpg,jpeg,webp}",
-  { eager: true }
+  { eager: true },
 );
 
 function importsToArray(imports) {
@@ -59,11 +59,17 @@ export default function App() {
 
   useEffect(() => {
     if (maxSlides <= 1) return;
-    const t = setInterval(() => setCarouselIndex((i) => (i + 1) % maxSlides), 4000);
+    const t = setInterval(
+      () => setCarouselIndex((i) => (i + 1) % maxSlides),
+      4000,
+    );
     return () => clearInterval(t);
   }, [maxSlides]);
 
-  const selectedFileName = useMemo(() => file?.name || "No file selected", [file]);
+  const selectedFileName = useMemo(
+    () => file?.name || "No file selected",
+    [file],
+  );
 
   /* ---------- Feedback state (single comment, per-variant scores) ---------- */
   const [scores, setScores] = useState({}); // { [url]: number (0-100) }
@@ -82,6 +88,13 @@ export default function App() {
     initScoresForVariants(variants);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [variants.length]);
+
+  /* optional small UX: auto-clear message after a short time */
+  useEffect(() => {
+    if (!msg) return;
+    const t = setTimeout(() => setMsg(""), 4000);
+    return () => clearTimeout(t);
+  }, [msg]);
 
   /* =========================
      Backend actions
@@ -110,7 +123,7 @@ export default function App() {
       const res = await axios.post(
         `${API_BASE}/api/upload?mode=${mode}`,
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        { headers: { "Content-Type": "multipart/form-data" } },
       );
 
       setOriginalUrl(`${API_BASE}${res.data.original}`);
@@ -129,7 +142,7 @@ export default function App() {
 
   async function handleDeleteAll() {
     const confirmed = window.confirm(
-      "Are you sure you want to delete all generated images?\n\nThis action cannot be undone."
+      "Are you sure you want to delete all generated images?\n\nThis action cannot be undone.",
     );
     if (!confirmed) return;
 
@@ -265,13 +278,16 @@ export default function App() {
      Render
      ========================= */
 
+  const SKELETON_COUNT = 3;
+
   return (
     <div className="page">
       <header className="topbar">
         <div>
           <h1 className="title">AI Image Colorizer</h1>
           <p className="subtitle">
-            Upload a photo, choose a preset, preview variants, download what you like.
+            Upload a photo, choose a preset, preview variants, download what you
+            like.
           </p>
         </div>
         <div className="chip">
@@ -322,7 +338,11 @@ export default function App() {
           </div>
 
           <div className="actions">
-            <button className="btn btnPrimary" onClick={handleUpload} disabled={loading}>
+            <button
+              className="btn btnPrimary"
+              onClick={handleUpload}
+              disabled={loading}
+            >
               {loading ? "Processing..." : "Generate Variants"}
             </button>
             <button
@@ -334,17 +354,39 @@ export default function App() {
             </button>
           </div>
 
+          {loading && (
+            <div
+              className="subtleStatus"
+              style={{
+                marginTop: 8,
+                fontSize: 12,
+                color: "rgba(234,234,241,0.6)",
+              }}
+            >
+              Processing image, generating variants...
+            </div>
+          )}
+
           {msg && <div className="message">{msg}</div>}
         </section>
 
         <section className="card">
           <h2 className="cardTitle">Preview</h2>
 
-          {!originalUrl && variants.length === 0 && (
+          {!originalUrl && variants.length === 0 && !loading && (
             <div className="empty">
               <div className="emptyIcon">🖼️</div>
               <div className="emptyTitle">No image yet</div>
-              <div className="emptyText">Upload an image and generate variants to preview them here.</div>
+              <div className="emptyText">
+                Upload an image and generate variants to preview them here.
+              </div>
+            </div>
+          )}
+
+          {file && !originalUrl && loading && (
+            <div className="empty">
+              <div className="emptyIcon">⏳</div>
+              <div className="emptyTitle">Processing image…</div>
             </div>
           )}
 
@@ -357,147 +399,245 @@ export default function App() {
         </section>
       </main>
 
-      {/* Downloads + Feedback panels placed directly below workspace/preview */}
-      <section className="comparisonAndReviews" style={{ marginTop: 20 }}>
-        <div className="comparisonLeft">
-          <section className="comparisonCarousel">
-            <h2 className="carouselTitle">Downloads</h2>
+      {/* Downloads + Feedback panels placed directly below workspace/preview
+          Show while loading OR once variants exist (so skeletons appear while processing) */}
+      {(loading || variants.length > 0) && (
+        <section className="comparisonAndReviews" style={{ marginTop: 20 }}>
+          <div className="comparisonLeft">
+            <section className="comparisonCarousel">
+              <h2 className="carouselTitle">Downloads</h2>
 
-            <div className="downloadGrid">
-              {variants.length === 0 ? (
-                <div className="empty" style={{ padding: 18 }}>
-                  <div className="emptyTitle">No generated variants yet</div>
-                  <div className="emptyText">Generate variants to see immediate download options here.</div>
-                </div>
-              ) : (
-                variants.map((url, idx) => {
-                  const progress = downloadProgress[url];
-                  const label = VARIANT_LABELS[idx] || `Variant ${idx + 1}`;
-                  return (
-                    <div key={url} className="downloadCard">
-                      <div className="downloadTop">
-                        <button className="btnSmall" onClick={() => forceDownloadWithProgress(url, `${label}.jpg`)}>
-                          Download
-                        </button>
-                      </div>
+              <div className="downloadGrid">
+                {loading
+                  ? Array.from({ length: SKELETON_COUNT }).map((_, i) => (
+                      <div
+                        key={`skeleton-${i}`}
+                        className="downloadCard skeleton-card"
+                      >
+                        <div
+                          className="downloadTop"
+                          style={{
+                            display: "flex",
+                            justifyContent: "flex-start",
+                            gap: 8,
+                          }}
+                        >
+                          <div className="skeleton skeleton-button" />
+                        </div>
 
-                      <div className="thumbWrapper">
-                        <img className="thumb" src={url} alt={label} />
-                        {progress !== undefined && progress < 100 && (
-                          <div className="progressOverlay">
-                            <div className="progressFill" style={{ width: `${progress}%` }} />
-                          </div>
-                        )}
-                      </div>
+                        <div className="thumbWrapper" style={{ marginTop: 8 }}>
+                          <div className="skeleton skeleton-thumb" />
+                        </div>
 
-                      <div style={{ marginTop: 8, textAlign: "center", fontSize: 12, color: "rgba(234,234,241,0.7)" }}>
-                        {label}
-                      </div>
-                    </div>
-                  );
-                })
-              )}
-            </div>
-
-            {variants.length > 0 && (
-              <div style={{ marginTop: 12, textAlign: "center" }}>
-                <button className="btn btnPrimary btnSmall" onClick={downloadAllAsZip}>Download All as ZIP</button>
-              </div>
-            )}
-          </section>
-        </div>
-
-        <div className="comparisonRight">
-          <section className="comparisonCarousel">
-            <h2 className="carouselTitle">Reviews</h2>
-
-            <div className="feedbackGrid">
-              {variants.length === 0 ? (
-                <div className="empty" style={{ padding: 18 }}>
-                  <div className="emptyTitle">No generated variants</div>
-                  <div className="emptyText">Generate variants to give feedback here.</div>
-                </div>
-              ) : (
-                variants.map((url, idx) => {
-                  const label = VARIANT_LABELS[idx] || `Variant ${idx + 1}`;
-                  const value = scores[url] ?? 100;
-                  return (
-                    <div key={url} className="feedbackRow">
-                      <div className="feedbackLabel">{label}</div>
-                      <div className="feedbackSliderRow">
-                        <input
-                          type="range"
-                          min="0"
-                          max="100"
-                          value={value}
-                          onChange={(e) => setScores((s) => ({ ...s, [url]: Number(e.target.value) }))}
+                        <div
+                          className="skeleton skeleton-line medium"
+                          style={{ marginTop: 8 }}
                         />
-                        <div className="sliderValue">{value}%</div>
                       </div>
-                    </div>
-                  );
-                })
-              )}
-            </div>
+                    ))
+                  : variants.map((url, idx) => {
+                      const progress = downloadProgress[url];
+                      const label = VARIANT_LABELS[idx] || `Variant ${idx + 1}`;
 
-            <div style={{ marginTop: 12 }}>
-              <textarea
-                placeholder="Optional feedback comment for all variants..."
-                value={feedbackComment}
-                onChange={(e) => setFeedbackComment(e.target.value)}
-                style={{ width: "100%", minHeight: 90, borderRadius: 10, padding: 10, background: "rgba(12,12,20,0.6)", color: "#eaeaf1", border: "1px solid rgba(255,255,255,0.06)" }}
-              />
-              <div style={{ marginTop: 10, display: "flex", gap: 8 }}>
-                <button className="btn btnPrimary" onClick={submitAllFeedback} disabled={submittingFeedback || variants.length === 0}>
-                  {submittingFeedback ? "Submitting..." : "Submit All Feedback"}
-                </button>
-                <button className="btn" onClick={() => { setFeedbackComment(""); setScores({}); initScoresForVariants(variants); }}>
-                  Clear
-                </button>
+                      return (
+                        <div key={url} className="downloadCard">
+                          <div className="downloadTop">
+                            <button
+                              className="btnSmall"
+                              onClick={() =>
+                                forceDownloadWithProgress(url, `${label}.jpg`)
+                              }
+                            >
+                              Download
+                            </button>
+                          </div>
+
+                          <div className="thumbWrapper">
+                            <img className="thumb" src={url} alt={label} />
+                            {progress !== undefined && progress < 100 && (
+                              <div className="progressOverlay">
+                                <div
+                                  className="progressFill"
+                                  style={{ width: `${progress}%` }}
+                                />
+                              </div>
+                            )}
+                          </div>
+
+                          <div
+                            style={{
+                              marginTop: 8,
+                              textAlign: "center",
+                              fontSize: 12,
+                              color: "rgba(234,234,241,0.7)",
+                            }}
+                          >
+                            {label}
+                          </div>
+                        </div>
+                      );
+                    })}
               </div>
-            </div>
-          </section>
-        </div>
-      </section>
 
-      {/* Carousel + User Satisfaction (keeps previous layout below) */}
+              {!loading && variants.length > 0 && (
+                <div style={{ marginTop: 12, textAlign: "center" }}>
+                  <button
+                    className="btn btnPrimary btnSmall"
+                    onClick={downloadAllAsZip}
+                  >
+                    Download All as ZIP
+                  </button>
+                </div>
+              )}
+            </section>
+          </div>
+
+          <div className="comparisonRight">
+            <section className="comparisonCarousel">
+              <h2 className="carouselTitle">Reviews</h2>
+
+              <div className="feedbackGrid">
+                {loading
+                  ? Array.from({ length: SKELETON_COUNT }).map((_, i) => (
+                      <div
+                        key={`fs-${i}`}
+                        className="feedbackRow skeleton-card"
+                        style={{ padding: 10 }}
+                      >
+                        <div className="skeleton skeleton-line short" />
+                        <div className="skeleton skeleton-line" />
+                      </div>
+                    ))
+                  : variants.map((url, idx) => {
+                      const label = VARIANT_LABELS[idx] || `Variant ${idx + 1}`;
+                      const value = scores[url] ?? 100;
+
+                      return (
+                        <div key={url} className="feedbackRow">
+                          <div className="feedbackLabel">{label}</div>
+                          <div className="feedbackSliderRow">
+                            <input
+                              type="range"
+                              min="0"
+                              max="100"
+                              value={value}
+                              onChange={(e) =>
+                                setScores((s) => ({
+                                  ...s,
+                                  [url]: Number(e.target.value),
+                                }))
+                              }
+                            />
+                            <div className="sliderValue">{value}%</div>
+                          </div>
+                        </div>
+                      );
+                    })}
+              </div>
+
+              {!loading && (
+                <div style={{ marginTop: 12 }}>
+                  <div className="feedbackRow feedbackCommentRow">
+                    <textarea
+                      className="feedbackTextarea"
+                      placeholder="Optional feedback comment for all variants..."
+                      value={feedbackComment}
+                      onChange={(e) => setFeedbackComment(e.target.value)}
+                    />
+                  </div>
+
+                  <div style={{ marginTop: 10, display: "flex", gap: 8 }}>
+                    <button
+                      className="btn btnPrimary"
+                      onClick={submitAllFeedback}
+                      disabled={submittingFeedback}
+                    >
+                      {submittingFeedback
+                        ? "Submitting..."
+                        : "Submit All Feedback"}
+                    </button>
+
+                    <button
+                      className="btn"
+                      onClick={() => {
+                        setFeedbackComment("");
+                        setScores({});
+                        initScoresForVariants(variants);
+                      }}
+                    >
+                      Clear
+                    </button>
+                  </div>
+                </div>
+              )}
+            </section>
+          </div>
+        </section>
+      )}
+
+      {/* Carousel + User Preference (keeps previous layout below) */}
       <section className="comparisonAndReviews" style={{ marginTop: 30 }}>
         <div className="comparisonLeft">
           <section className="comparisonCarousel">
-            <h2 className="carouselTitle">Before & After Examples</h2>
+            <h2 className="carouselTitle">Before & After</h2>
 
             <div className="carouselRow">
               <div className="carouselImageBlock">
                 <span>Black & White</span>
-                <img src={bwImages[carouselIndex] || PLACEHOLDER} alt="bw example" />
+                <img
+                  src={bwImages[carouselIndex] || PLACEHOLDER}
+                  alt="bw example"
+                />
               </div>
 
               <div className="carouselImageBlock">
                 <span>Colorized</span>
-                <img src={coloredImages[carouselIndex] || PLACEHOLDER} alt="colorized example" />
+                <img
+                  src={coloredImages[carouselIndex] || PLACEHOLDER}
+                  alt="colorized example"
+                />
               </div>
             </div>
 
             <div className="carouselControls">
-              <button onClick={() => setCarouselIndex((i) => (i === 0 ? maxSlides - 1 : i - 1))}>◀</button>
-              <span>{carouselIndex + 1} / {maxSlides}</span>
-              <button onClick={() => setCarouselIndex((i) => (i + 1) % maxSlides)}>▶</button>
+              <button
+                onClick={() =>
+                  setCarouselIndex((i) => (i === 0 ? maxSlides - 1 : i - 1))
+                }
+              >
+                ◀
+              </button>
+              <span>
+                {carouselIndex + 1} / {maxSlides}
+              </span>
+              <button
+                onClick={() => setCarouselIndex((i) => (i + 1) % maxSlides)}
+              >
+                ▶
+              </button>
             </div>
           </section>
         </div>
 
         <div className="comparisonRight">
           <div className="reviewPanel">
-            <h2 className="reviewTitle">User Satisfaction</h2>
-            <p className="reviewSubtitle">Aggregated feedback from sentiment analysis</p>
+            <h2 className="reviewTitle">User Preference</h2>
+            <p className="reviewSubtitle">
+              Aggregated feedback from sentiment analysis
+            </p>
 
             <div className="reviewGlass">
               <div className="reviewGraphWrapper">
-                <img src={`${API_BASE}/api/reviews/summary`} alt="User satisfaction graph" />
+                <img
+                  src={`${API_BASE}/api/reviews/summary`}
+                  alt="User Preference graph"
+                />
               </div>
             </div>
 
-            <p className="reviewNote">This graph updates automatically as users submit feedback.</p>
+            <p className="reviewNote">
+              This graph updates automatically as users submit feedback.
+            </p>
           </div>
         </div>
       </section>

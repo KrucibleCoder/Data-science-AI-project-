@@ -2,6 +2,60 @@
    MERGED STYLES — prefer user-provided styles for common components
    ============================================================ */
 
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.03) 25%,
+    rgba(255, 255, 255, 0.08) 37%,
+    rgba(255, 255, 255, 0.03) 63%
+  );
+  background-size: 400% 100%;
+  animation: skeleton-shimmer 1.2s linear infinite;
+  border-radius: 10px;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+.skeleton-thumb {
+  width: 100%;
+  height: 140px;
+  border-radius: 8px;
+}
+
+.skeleton-line {
+  height: 12px;
+  margin-top: 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.skeleton-line.short {
+  width: 45%;
+}
+
+.skeleton-line.medium {
+  width: 70%;
+}
+
+.skeleton-button {
+  height: 32px;
+  width: 84px;
+  border-radius: 6px;
+}
+
+.skeleton-card {
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+}
+
 /* ============================================================
    GLOBAL PAGE LAYOUT
    ============================================================ */
@@ -12,8 +66,8 @@
   box-sizing: border-box;
   color: #eaeaf1;
   background:
-    radial-gradient(1200px 800px at 10% 10%, #2a2a55 0%, rgba(0,0,0,0) 60%),
-    radial-gradient(1200px 800px at 90% 30%, #214d4a 0%, rgba(0,0,0,0) 60%),
+    radial-gradient(1200px 800px at 10% 10%, #2a2a55 0%, rgba(0, 0, 0, 0) 60%),
+    radial-gradient(1200px 800px at 90% 30%, #214d4a 0%, rgba(0, 0, 0, 0) 60%),
     linear-gradient(180deg, #0b0b12 0%, #07070c 100%);
 }
 
@@ -56,7 +110,9 @@
 }
 
 @media (max-width: 900px) {
-  .grid { grid-template-columns: 1fr; }
+  .grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ============================================================
@@ -64,15 +120,19 @@
    ============================================================ */
 
 .card {
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 18px;
   padding: 16px;
   backdrop-filter: blur(10px);
-  box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
 }
 
-.cardTitle { margin: 0; font-size: 18px; font-weight: 650; }
+.cardTitle {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 650;
+}
 
 /* additional header row utilities (non-conflicting from uploaded file) */
 .cardHeaderRow {
@@ -89,7 +149,9 @@
 }
 
 /* form groups and selects (from uploaded file) */
-.controlGroup { margin-top: 14px; }
+.controlGroup {
+  margin-top: 14px;
+}
 
 .label {
   display: block;
@@ -107,7 +169,6 @@
   background: rgba(12, 12, 20, 0.55);
   color: #eaeaf1;
   outline: none;
-  margin-top: 12px;
 }
 
 .select:focus {
@@ -124,6 +185,7 @@
   cursor: pointer;
   border-radius: 16px;
   border: 1px dashed rgba(255, 255, 255, 0.18);
+  margin-top: 10px;
   background: rgba(12, 12, 20, 0.4);
   transition:
     transform 120ms ease,
@@ -135,26 +197,57 @@
   border-color: rgba(130, 185, 255, 0.6);
 }
 
-.fileBox input { display: none; }
+.fileBox input {
+  display: none;
+}
 
 /* keep user's inner layout for file box (preferred) */
-.fileBoxInner { display: flex; gap: 12px; align-items: center; padding: 12px; }
-.fileIcon { width: 42px; height: 42px; border-radius: 14px; display:flex; align-items:center; justify-content:center; }
-.fileText { display: flex; flex-direction: column; justify-content: center; }
-.fileName { font-size: 14px; font-weight: 650; margin: 0; }
-.fileHint { font-size: 12px; color: rgba(234,234,241,0.65); margin-top: 2px; }
+.fileBoxInner {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+}
+.fileIcon {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fileText {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.fileName {
+  font-size: 14px;
+  font-weight: 650;
+  margin: 0;
+}
+.fileHint {
+  font-size: 12px;
+  color: rgba(234, 234, 241, 0.65);
+  margin-top: 2px;
+}
 
 /* ============================================================
    BUTTONS (base from user, extras from uploaded file)
    ============================================================ */
 
-.actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 14px;
+}
 
 .btn {
   width: 100%;
   padding: 10px 12px;
   border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.14);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   cursor: pointer;
   font-weight: 650;
   transition:
@@ -188,7 +281,12 @@
 }
 
 /* Compact button for header toolbars */
-.btnSmall { width: auto; padding: 6px 14px; font-size: 12px; border-radius: 999px; }
+.btnSmall {
+  width: auto;
+  padding: 6px 14px;
+  font-size: 12px;
+  border-radius: 999px;
+}
 
 /* ============================================================
    LINK-STYLE BUTTONS
@@ -208,7 +306,9 @@ button.link {
 }
 
 button.link:hover:not(:disabled),
-a.link:hover { text-decoration: underline; }
+a.link:hover {
+  text-decoration: underline;
+}
 
 button.link:disabled {
   opacity: 0.5;
@@ -234,7 +334,11 @@ button.link:disabled {
   border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-.tipTitle { font-weight: 650; margin-bottom: 8px; text-align: left; }
+.tipTitle {
+  font-weight: 650;
+  margin-bottom: 8px;
+  text-align: left;
+}
 
 .tips ul {
   margin: 0;
@@ -284,7 +388,11 @@ button.link:disabled {
   border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-.image { width: 100%; border-radius: 14px; border: 1px solid rgba(255,255,255,0.12); }
+.image {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
 
 .variantsHeader {
   display: flex;
@@ -334,9 +442,18 @@ button.link:disabled {
   background: rgba(12, 12, 20, 0.35);
 }
 
-.emptyIcon { font-size: 28px; margin-bottom: 8px; }
-.emptyTitle { font-weight: 700; margin-bottom: 6px; }
-.emptyText { color: rgba(234, 234, 241, 0.7); font-size: 13px; }
+.emptyIcon {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+.emptyTitle {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.emptyText {
+  color: rgba(234, 234, 241, 0.7);
+  font-size: 13px;
+}
 
 /* ============================================================
    DOWNLOAD GRID (user-provided)
@@ -350,8 +467,8 @@ button.link:disabled {
 }
 
 .downloadCard {
-  background: rgba(12,12,20,0.6);
-  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(12, 12, 20, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 12px;
   padding: 10px;
   display: flex;
@@ -367,14 +484,18 @@ button.link:disabled {
   align-items: center;
 }
 
-.downloadTop .btnSmall { padding: 6px 12px; font-size: 12px; border-radius: 999px; }
+.downloadTop .btnSmall {
+  padding: 6px 12px;
+  font-size: 12px;
+  border-radius: 999px;
+}
 
 .thumbWrapper {
   width: 100%;
   overflow: hidden;
   border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.06);
-  background: rgba(12,12,20,0.5);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(12, 12, 20, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -391,34 +512,51 @@ button.link:disabled {
   margin-top: 6px;
   font-size: 12px;
   text-align: center;
-  color: rgba(234,234,241,0.7);
+  color: rgba(234, 234, 241, 0.7);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 @media (max-width: 520px) {
-  .downloadGrid { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+  .downloadGrid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
 }
 
 /* ============================================================
    PROGRESS OVERLAY (user-provided)
    ============================================================ */
 
-.imageWrapper { position: relative; }
-.image.downloading { filter: grayscale(100%) brightness(0.6); }
-.progressOverlay { position: absolute; inset: 0; background: rgba(0,0,0,0.35); }
-.progressFill { height: 100%; background: rgba(145,255,210,0.5); }
+.imageWrapper {
+  position: relative;
+}
+.image.downloading {
+  filter: grayscale(100%) brightness(0.6);
+}
+.progressOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+}
+.progressFill {
+  height: 100%;
+  background: rgba(145, 255, 210, 0.5);
+}
 
 /* ============================================================
    FEEDBACK PANEL (user-provided)
    ============================================================ */
 
-.feedbackGrid { display: flex; flex-direction: column; gap: 10px; }
+.feedbackGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 
 .feedbackRow {
-  background: rgba(12,12,20,0.6);
-  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(12, 12, 20, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 10px;
   padding: 8px;
   display: flex;
@@ -426,16 +564,30 @@ button.link:disabled {
   gap: 10px;
 }
 
-.feedbackLabel { width: 96px; font-size: 13px; color: rgba(234,234,241,0.9); font-weight: 600; }
+.feedbackLabel {
+  width: 96px;
+  font-size: 13px;
+  color: rgba(234, 234, 241, 0.9);
+  font-weight: 600;
+}
 
-.feedbackSliderRow { display: flex; align-items: center; gap: 8px; flex: 1; }
+.feedbackSliderRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
 
 .feedbackSliderRow input[type="range"] {
   flex: 1;
   appearance: none;
   height: 6px;
   border-radius: 999px;
-  background: linear-gradient(90deg, rgba(145,255,210,0.25), rgba(130,185,255,0.18));
+  background: linear-gradient(
+    90deg,
+    rgba(145, 255, 210, 0.25),
+    rgba(130, 185, 255, 0.18)
+  );
   outline: none;
 }
 
@@ -444,22 +596,62 @@ button.link:disabled {
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: rgba(0,0,0,0.6);
-  border: 2px solid rgba(234,234,241,0.9);
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid rgba(234, 234, 241, 0.9);
   cursor: pointer;
 }
 
-.sliderValue { min-width: 42px; text-align: right; font-size: 12px; color: rgba(234,234,241,0.75); }
+.sliderValue {
+  min-width: 42px;
+  text-align: right;
+  font-size: 12px;
+  color: rgba(234, 234, 241, 0.75);
+}
 
 .feedbackComment {
   width: 100%;
   min-height: 88px;
   border-radius: 10px;
   padding: 10px;
-  background: rgba(12,12,20,0.6);
+  background: rgba(12, 12, 20, 0.6);
   color: #eaeaf1;
-  border: 1px solid rgba(255,255,255,0.06);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   resize: vertical;
+}
+
+/* Feedback comment textarea wrapper */
+.feedbackCommentRow {
+  margin-top: 12px;
+}
+
+/* Match slider row visual language */
+.feedbackTextarea {
+  width: 100%;
+  min-height: 96px;
+  resize: vertical;
+
+  padding: 12px 14px;
+  border-radius: 12px;
+
+  background: rgba(12, 12, 20, 0.55);
+  color: #eaeaf1;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  outline: none;
+
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.feedbackTextarea::placeholder {
+  color: rgba(234, 234, 241, 0.45);
+}
+
+/* Focus state for polish */
+.feedbackTextarea:focus {
+  border-color: rgba(122, 162, 247, 0.6);
+  box-shadow: 0 0 0 2px rgba(122, 162, 247, 0.15);
 }
 
 /* ============================================================
@@ -477,21 +669,32 @@ button.link:disabled {
 }
 
 @media (max-width: 1100px) {
-  .comparisonAndReviews { grid-template-columns: 1fr; }
+  .comparisonAndReviews {
+    grid-template-columns: 1fr;
+  }
 }
 
 .comparisonCarousel {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 22px;
   padding: 20px;
   backdrop-filter: blur(12px);
-  box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
 }
 
-.carouselTitle { margin-bottom: 14px; font-size: 20px; font-weight: 650; color: rgba(234,234,241,0.95); }
+.carouselTitle {
+  margin-bottom: 14px;
+  font-size: 20px;
+  font-weight: 650;
+  color: rgba(234, 234, 241, 0.95);
+}
 
-.carouselRow { display: grid; grid-template-columns: 1fr; gap: 14px; }
+.carouselRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
 
 /* carousel image block (kept the reduced height from uploaded file) */
 .carouselImageBlock {
@@ -500,15 +703,26 @@ button.link:disabled {
   gap: 6px;
   height: 420px;
   padding: 10px;
-  background: rgba(12,12,20,0.6);
-  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(12, 12, 20, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 18px;
   overflow: hidden;
 }
 
-.carouselImageBlock span { font-size: 12px; color: rgba(234,234,241,0.75); text-align: center; }
+.carouselImageBlock span {
+  font-size: 12px;
+  color: rgba(234, 234, 241, 0.75);
+  text-align: center;
+}
 
-.carouselImageBlock img { flex: 1; width: 100%; object-fit: contain; background: rgba(12,12,20,0.8); border-radius: 14px; border: 1px solid rgba(255,255,255,0.12); }
+.carouselImageBlock img {
+  flex: 1;
+  width: 100%;
+  object-fit: contain;
+  background: rgba(12, 12, 20, 0.8);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
 
 /* carousel controls (from uploaded file — additive) */
 .carouselControls {
@@ -523,36 +737,55 @@ button.link:disabled {
   width: 34px;
   height: 34px;
   border-radius: 999px;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   color: rgba(234, 234, 241, 0.85);
   cursor: pointer;
   font-size: 14px;
-  transition: background 120ms ease, transform 120ms ease;
+  transition:
+    background 120ms ease,
+    transform 120ms ease;
 }
 
-.carouselControls button:hover { background: rgba(145,255,210,0.25); transform: translateY(-1px); }
+.carouselControls button:hover {
+  background: rgba(145, 255, 210, 0.25);
+  transform: translateY(-1px);
+}
 
-.carouselControls span { min-width: 60px; text-align: center; font-size: 12px; color: rgba(234,234,241,0.65); }
+.carouselControls span {
+  min-width: 60px;
+  text-align: center;
+  font-size: 12px;
+  color: rgba(234, 234, 241, 0.65);
+}
 
 /* review panel glass (user preferred sizing + look) */
 .reviewPanel {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 22px;
   padding: 22px;
   backdrop-filter: blur(12px);
-  box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
   display: flex;
   flex-direction: column;
 }
 
-.reviewTitle { font-size: 20px; font-weight: 650; color: rgba(234,234,241,0.95); margin-bottom: 6px; }
-.reviewSubtitle { font-size: 13px; color: rgba(234,234,241,0.65); margin-bottom: 16px; }
+.reviewTitle {
+  font-size: 20px;
+  font-weight: 650;
+  color: rgba(234, 234, 241, 0.95);
+  margin-bottom: 6px;
+}
+.reviewSubtitle {
+  font-size: 13px;
+  color: rgba(234, 234, 241, 0.65);
+  margin-bottom: 16px;
+}
 
 .reviewGlass {
-  background: rgba(12,12,20,0.6);
-  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(12, 12, 20, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 18px;
   padding: 12px;
 }
@@ -560,16 +793,30 @@ button.link:disabled {
 .reviewGraphWrapper {
   width: 100%;
   padding: 12px;
-  background: rgba(12,12,20,0.8);
+  background: rgba(12, 12, 20, 0.8);
   border-radius: 14px;
 }
 
-.reviewGraphWrapper img { width: 100%; height: auto; display: block; border-radius: 12px; }
+.reviewGraphWrapper img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+}
 
-.reviewNote { margin-top: 12px; font-size: 11px; color: rgba(234,234,241,0.55); text-align: center; }
+.reviewNote {
+  margin-top: 12px;
+  font-size: 11px;
+  color: rgba(234, 234, 241, 0.55);
+  text-align: center;
+}
 
 /* small screens adjustments */
 @media (max-width: 900px) {
-  .downloadGrid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
-  .carouselImageBlock { height: 320px; }
+  .downloadGrid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+  .carouselImageBlock {
+    height: 320px;
+  }
 }

@@ -50,7 +50,7 @@ def _demo_scores():
 def generate_satisfaction_pie() -> bytes:
     """
     Generates a dark-themed, transparent PNG pie chart representing
-    average user satisfaction per variant.
+    average User Prefrence per variant.
 
     - Uses demo data if no reviews exist
     - Designed to visually integrate with dark/glass UI
@@ -120,7 +120,7 @@ def generate_satisfaction_pie() -> bytes:
 
     ax.axis("equal")
 
-    title = "User Satisfaction (Demo Data)" if demo else "User Satisfaction"
+    title = "User Preference (Demo Data)" if demo else ""
     ax.set_title(
         title,
         color=TITLE_COLOR,
