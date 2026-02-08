@@ -36,7 +36,7 @@ from app.storage import UPLOAD_DIR, OUTPUT_DIR, clear_storage
 from app.pipeline import process_image
 from app.feedback_nlp import analyze_feedback
 from app.review_analytics import generate_satisfaction_pie
-
+from app.dev_analytics import analyze_reviews, generate_dev_report_png
 
 # =============================================================================
 # FastAPI application initialization
@@ -172,6 +172,30 @@ async def submit_review(payload: dict = Body(...)):
 @app.get("/api/reviews/summary")
 def review_summary():
     image_bytes = generate_satisfaction_pie()
+    return Response(
+        content=image_bytes,
+        media_type="image/png"
+    )
+
+
+# =============================================================================
+# DEVELOPER ANALYTICS (NOT USER-FACING)
+# =============================================================================
+
+@app.get("/api/dev/analytics")
+def dev_analytics():
+    """
+    Returns structured NLP + score analytics for developer inspection.
+    """
+    return analyze_reviews()
+
+
+@app.get("/api/dev/report")
+def dev_report():
+    """
+    Returns a PNG report summarizing review analytics.
+    """
+    image_bytes = generate_dev_report_png()
     return Response(
         content=image_bytes,
         media_type="image/png"
