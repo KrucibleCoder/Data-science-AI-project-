@@ -1,246 +1,196 @@
-# AI Image Colorizer (FastAPI + React)
+# AI Image Colorizer
+**FastAPI + React | AI Enhancement, Colorization & Analytics**
 
-A full-stack AI-powered image enhancement + colorization project.
+A full-stack AI-powered image enhancement and colorization system featuring user feedback analytics, NLP-based sentiment analysis, and a token-protected developer diagnostics dashboard.
 
-✅ Upload an image  
-✅ Choose a processing mode:
-  - Enhance Only
-  - Colorize Only (AI)
-  - Enhance + Colorize
-
-✅ Get 3 output variants  
-✅ Download results  
-✅ Delete generated files (privacy + storage)
+> **Note:** Advanced NLP and Developer features (NLTK, TextBlob, and the Dashboard) are available on the **demo branch**.
 
 ---
 
-## Tech Stack
+## 🚀 Features
+
+### User Features
+* **Image Processing:** Upload PNG, JPG, or WEBP.
+* **Multiple Modes:**
+  * Enhance Only
+  * Colorize Only (AI)
+  * Enhance + Colorize
+* **Variant Generation:** Automatically generates multiple output variants for comparison.
+* **Batch Management:** Preview individual variants, download all as a ZIP, or delete files to maintain privacy.
+* **Feedback Loop:** Slider-based user feedback per variant and public satisfaction visualization.
+
+### Developer Features (Demo Branch)
+* **NLP Feedback Analysis:** Sentiment polarity, subjectivity, and keyword extraction using NLTK and TextBlob.
+* **Diagnostics Dashboard:** A hidden, token-protected UI for variant-level diagnostics.
+* **Reporting:** Auto-generated PNG analytics reports and developer-only APIs.
+
+---
+
+## 🛠 Tech Stack
 
 ### Backend
-- Python
-- FastAPI
-- Uvicorn
-- OpenCV (for enhancement + AI colorization pipeline)
-- NumPy
+* **Core:** Python 3.12+, FastAPI, Uvicorn
+* **Processing:** OpenCV, NumPy
+* **Analytics/NLP:** Matplotlib, NLTK, TextBlob
 
 ### Frontend
-- React (Vite)
-- Axios
+* **Core:** React (Vite)
+* **Networking:** Axios
+* **Utilities:** React Router, JSZip
 
 ---
 
-## Project Structure
+## 📁 Project Structure
 
 ```text
 AI-colorizer/
-├── app/                     # FastAPI backend logic
-│   ├── main.py              # API entry
-│   ├── pipeline.py          # decides which mode to run
-│   ├── enhance.py           # enhancement variants
-│   ├── colorize.py          # AI colorization
-│   └── storage.py           # upload/output paths + delete
+├── app/                     # Backend Logic
+│   ├── main.py              # API Entry Point
+│   ├── pipeline.py          # Processing Orchestrator
+│   ├── enhance.py           # Image Enhancement
+│   ├── colorize.py          # AI Colorization
+│   ├── storage.py           # File System Management
+│   ├── feedback_nlp.py      # NLP Analysis (Demo)
+│   ├── review_analytics.py  # Data Processing
+│   └── dev_analytics.py     # Report Generation
 │
-├── uploads/                 # uploaded files (generated)
-├── outputs/                 # output variants (generated)
+├── Reviews/                 # Feedback Data (gitignored)
+├── uploads/                 # Source Images (gitignored)
+├── outputs/                 # Processed Images (gitignored)
 │
 ├── models/
-│   └── colorization/        # local AI weights (NOT committed)
+│   └── colorization/        # AI Weights (Local Only - NOT committed)
 │
-└── frontend/                # React frontend
+└── frontend/                # React Vite Project
+    └── src/pages/DevDashboard.jsx
+
 ```
 
 ---
 
-## Requirements
+## ⚙️ Setup Instructions
 
-### Software Needed
-- Python 3.10+ (recommended)
-- Node.js 18+ (recommended)
-- Git
+### 1. Clone Repository & Select Branch
 
----
-
-# Setup Instructions (Fresh Clone)
-
-### 1) Clone the repo
 ```powershell
-git clone "https://github.com/KrucibleCoder/AI-colorizer.git"
+git clone [https://github.com/KrucibleCoder/AI-colorizer.git](https://github.com/KrucibleCoder/AI-colorizer.git)
 cd AI-colorizer
+
+# Switch to demo branch for NLP/Analytics features
+git checkout demo
+
 ```
 
-### Backend Setup (FastAPI)
-### 2) Create and activate virtual environment
+### 2. Backend Environment Setup
+
 ```powershell
+# Create virtual environment
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-```
-If activation is blocked due to execution policy:
-- Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 
-### 3) Install Python dependencies
+# If execution is blocked, run:
+# Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+
+```
+
+### 3. Install Dependencies
+
 ```powershell
-pip install fastapi uvicorn python-multipart pillow opencv-python numpy
+pip install fastapi uvicorn python-multipart pillow opencv-python numpy matplotlib nltk textblob
+
+# Download required NLP corpora
+python -m textblob.download_corpora
+
 ```
 
-#### Model Setup (IMPORTANT)
- - This project uses OpenCV DNN colorization weights.
- - These model files are NOT committed to GitHub (they are ignored in .gitignore).
+### 4. AI Model Setup (CRITICAL)
 
-### 4) Create models folder
+The project uses OpenCV DNN colorization weights. These files are **ignored** by git and must be downloaded manually.
+
+**Create the directory:**
+
 ```powershell
 mkdir models
 mkdir models\colorization
+
 ```
 
-### 5) Download the model files and place them here:
-#### Put these 3 files into:
-- models/colorization/
+**Download the 3 required files:**
+Run these commands in PowerShell to place them in `models/colorization/`:
 
-#### Required files:
-- colorization_deploy_v2.prototxt
-- colorization_release_v2.caffemodel
-- pts_in_hull.npy
+```powershell
+Invoke-WebRequest -Uri "[https://raw.githubusercontent.com/richzhang/colorization/caffe/models/colorization_deploy_v2.prototxt](https://raw.githubusercontent.com/richzhang/colorization/caffe/models/colorization_deploy_v2.prototxt)" -OutFile "models/colorization/colorization_deploy_v2.prototxt"
 
-  Reliable full download commands:
-  ```powershell
-  Invoke-WebRequest -Uri "https://raw.githubusercontent.com/richzhang/colorization/caffe/models/colorization_deploy_v2.prototxt" -OutFile "colorization_deploy_v2.prototxt"
-  Invoke-WebRequest -Uri "https://raw.githubusercontent.com/richzhang/colorization/caffe/resources/pts_in_hull.npy" -OutFile "pts_in_hull.npy"
-  Invoke-WebRequest -Uri "https://www.dropbox.com/scl/fi/d8zffur3wmd4wet58dp9x/colorization_release_v2.caffemodel?rlkey=iippu6vtsrox3pxkeohcuh4oy&dl=1" -OutFile "colorization_release_v2.caffemodel"
+Invoke-WebRequest -Uri "[https://raw.githubusercontent.com/richzhang/colorization/caffe/resources/pts_in_hull.npy](https://raw.githubusercontent.com/richzhang/colorization/caffe/resources/pts_in_hull.npy)" -OutFile "models/colorization/pts_in_hull.npy"
 
-  ```
+Invoke-WebRequest -Uri "[https://www.dropbox.com/scl/fi/d8zffur3wmd4wet58dp9x/colorization_release_v2.caffemodel?dl=1](https://www.dropbox.com/scl/fi/d8zffur3wmd4wet58dp9x/colorization_release_v2.caffemodel?dl=1)" -OutFile "models/colorization/colorization_release_v2.caffemodel"
 
-Final result must look like:
-```text
-models/colorization/colorization_deploy_v2.prototxt
-models/colorization/colorization_release_v2.caffemodel
-models/colorization/pts_in_hull.npy
 ```
-#### ⚠️ If these files are missing, Colorize mode will fail.
 
-### 6) Run the backend
-From repo root:
+> **Verify:** Ensure `colorization_release_v2.caffemodel` is ~128MB. If it is 0KB, download it manually from the Dropbox link.
+
+### 5. Developer Token Setup
+
+Set the security token for the hidden dashboard.
+*Restart your terminal after running this command.*
+
+```powershell
+setx DEV_DASHBOARD_TOKEN "demo-dev-token_00"
+
+```
+
+---
+
+## 🏃 Running the Application
+
+### Start Backend (FastAPI)
 
 ```powershell
 uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+
 ```
-Backend URL:
-- http://127.0.0.1:8000
 
-Swagger docs:
-- http://127.0.0.1:8000/docs
+* **API Docs:** http://127.0.0.1:8000/docs
+* **API Base:** http://127.0.0.1:8000
 
-## Frontend Setup (React)
-### 7) Install frontend dependencies
-Open a NEW terminal in the repo root:
+### Start Frontend (React)
+
+Open a **new** terminal window:
 
 ```powershell
 cd frontend
 npm install
-```
-
-### 8) Start frontend
-```powershell
+npm install react-router-dom
 npm run dev
+
 ```
 
-Frontend URL:
-
-http://localhost:5173
-
----
-## How to Use:
-Open the frontend in your browser:
-
-1. http://localhost:5173
-2. Upload an image
-3. Select one of the modes:
-   - Enhance Only
-   - Colorize Only
-   - Enhance + Colorize
-4. Click Generate Variants
-5. Preview and download results
-6. Use Delete All to remove generated files
+* **User Interface:** http://localhost:5173
+* **Developer Dashboard:** http://localhost:5173/__dev/dashboard
 
 ---
-## API Endpoints:
-1) POST /api/upload?mode=enhance|colorize|both
-   - Uploads an image and returns output URLs.
 
-    Example response:
-    ```text
-    {
-      "message": "Upload successful",
-      "mode": "colorize",
-      "original": "/uploads/example.jpg",
-      "variants":
-    [
-        "/outputs/example_colorize1.jpg",
-        "/outputs/example_colorize2.jpg",
-        "/outputs/example_colorize3.jpg"
-      ]
-    }
-    ```
+## ⚠️ Common Issues & Troubleshooting
 
-2) DELETE /api/delete_all
-   - Deletes everything from:
-     - /uploads
-     - /outputs
----
-### Notes About Large Files (IMPORTANT)
-Model weight files are ignored and should never be committed.
+**1. "Upload failed. Check backend is running."**
 
-### Your .gitignore includes:
+* Ensure FastAPI is running on port 8000.
+* Ensure CORS is enabled in `main.py` for `http://localhost:5173`.
 
-- .venv/
-- frontend/node_modules/
-- models/colorization/*.prototxt
-- models/colorization/*.caffemodel
-- models/colorization/*.npy
+**2. Colorize mode crashes**
 
-## Common Issues
-Frontend says: "Upload failed. Check backend is running."
+* 99% of the time, this is missing model files.
+* Check that `models/colorization/` contains all 3 files: `.prototxt`, `.caffemodel`, and `.npy`.
 
-## Fix:
+**3. Developer Dashboard Access Denied**
 
-### Make sure backend is running at:
-
-http://127.0.0.1:8000
-
-### Ensure FastAPI has CORS enabled for:
-
-http://localhost:5173
-
-## Colorize mode crashes / doesn't work
-### Cause:
-Missing model files.
-
-### Fix:
-Make sure the 3 required files exist inside:
-
-models/colorization/
+* Ensure you ran the `setx` command for the token.
+* Ensure you restarted the terminal (and VS Code) so the environment variable loads.
 
 ---
-# Future Improvements
 
-1. Higher quality AI colorization model (DeOldify / diffusion)
-2. Better multi-variant generation (real variety)
-3. Session-based deletion for multi-user hosting
-4. Batch processing
-5. Offline EXE / APK packaging
+## 📜 License
 
----
-# License
+This project utilizes pretrained assets from **Colorful Image Colorization (ECCV 2016)** by Richard Zhang, Phillip Isola, and Alexei A. Efros.
 
-### Third-party models & assets
-This project uses the pretrained model assets from:
-
-- **Colorful Image Colorization** (Richard Zhang, Phillip Isola, Alexei A. Efros, ECCV 2016)  
-  License: **BSD-2-Clause**  
-  Source: `richzhang/colorization`
-
-Model files used:
-- `colorization_deploy_v2.prototxt`
-- `pts_in_hull.npy`
-- `colorization_release_v2.caffemodel`
-
-These files are downloaded locally during setup and are **not included in this repository**.
+* **License:** BSD-2-Clause
