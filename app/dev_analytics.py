@@ -5,6 +5,9 @@ import statistics
 import matplotlib.pyplot as plt
 import io
 
+import matplotlib
+matplotlib.use("Agg")
+
 REVIEWS_FILE = Path("Reviews") / "reviews.jsonl"
 
 NEGATIVE_THRESHOLD = 45      # score below this is concerning
