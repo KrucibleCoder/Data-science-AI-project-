@@ -1,27 +1,41 @@
+# =========================
+# AI Image Colorizer (demo)
+# Backend Requirements
+# =========================
+
 # Core web framework and ASGI server
-fastapi>=0.95            # API framework
-uvicorn[standard]>=0.22  # ASGI server with extras (watch, headers, etc)
+fastapi>=0.95
+uvicorn[standard]>=0.22
 
 # File uploads / static file support
-python-multipart         # required for FastAPI file uploads
-aiofiles                 # async file serving for StaticFiles
+python-multipart
+aiofiles
 
 # Image processing + numeric
-numpy>=1.24              # required for array ops (colorization)
-opencv-python            # cv2 (image processing & DNN colorizer) - note: large binary
-Pillow                   # image I/O convenience and fallback
+numpy>=1.24
+opencv-python
+Pillow
 
-# Utilities (recommended)
-python-dotenv            # optional: manage env vars in .env
-requests                 # optional: downloading assets or helper scripts
+# Visualization & analytics
+matplotlib
 
-# Dev/test (optional - uncomment if you want them)
-# pytest                 # for tests
-# black                  # code formatter
-# flake8                 # linting
+# NLP / Sentiment analysis
+nltk
+textblob
 
-# Optional model runtimes (DO NOT enable unless you need them)
-# torch                  # heavy - only if you run PyTorch models locally
+# Utilities
+python-dotenv
+requests
+
+# =========================
+# Notes
+# =========================
+# - Review data, models, and generated files are NOT part of requirements
+# - Heavy ML runtimes are intentionally excluded
+# - This file is tailored for the `demo` branch
+#
+# Optional (commented out intentionally):
+# torch
 # torchvision
-# onnxruntime            # if you convert models to ONNX and run them
-# tflite-runtime         # if packaging for lightweight TFLite inference
+# onnxruntime
+# tflite-runtime

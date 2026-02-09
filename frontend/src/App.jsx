@@ -76,6 +76,10 @@ export default function App() {
   const [feedbackComment, setFeedbackComment] = useState("");
   const [submittingFeedback, setSubmittingFeedback] = useState(false);
 
+  // UX state for feedback outcome
+  const [feedbackStatus, setFeedbackStatus] = useState(null);
+  // null | "success" | "partial" | "error"
+
   function initScoresForVariants(vars) {
     const s = {};
     vars.forEach((v, i) => {
@@ -89,12 +93,13 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [variants.length]);
 
-  /* optional small UX: auto-clear message after a short time */
+  /* optional small UX: auto-clear message after a short time
+     but do not auto-clear while feedback is actively submitting */
   useEffect(() => {
-    if (!msg) return;
+    if (!msg || submittingFeedback) return;
     const t = setTimeout(() => setMsg(""), 4000);
     return () => clearTimeout(t);
-  }, [msg]);
+  }, [msg, submittingFeedback]);
 
   /* =========================
      Backend actions
@@ -132,9 +137,11 @@ export default function App() {
       setDownloadProgress({});
       initScoresForVariants(vs);
       setMsg(`✅ Generated results using "${mode}" mode.`);
+      setFeedbackStatus(null);
     } catch (err) {
       console.error(err);
       setMsg("❌ Upload failed. Check backend.");
+      setFeedbackStatus("error");
     } finally {
       setLoading(false);
     }
@@ -155,10 +162,12 @@ export default function App() {
       setDownloadProgress({});
       setScores({});
       setFeedbackComment("");
+      setFeedbackStatus(null);
       setMsg("🧹 All generated images were deleted.");
     } catch (err) {
       console.error(err);
       setMsg("❌ Delete failed.");
+      setFeedbackStatus("error");
     } finally {
       setLoading(false);
     }
@@ -209,6 +218,7 @@ export default function App() {
         delete copy[url];
         return copy;
       });
+      setFeedbackStatus("error");
     }
   }
 
@@ -247,6 +257,10 @@ export default function App() {
     }
 
     setSubmittingFeedback(true);
+    setFeedbackStatus(null);
+
+    let successCount = 0;
+
     try {
       // Send one POST per variant (backend should accept this path)
       for (let i = 0; i < variants.length; i++) {
@@ -260,15 +274,28 @@ export default function App() {
             score,
             comment: feedbackComment,
           });
+          successCount += 1;
         } catch (err) {
           // ignore per-image error but log
           console.warn("feedback submit failed for", img, err);
         }
       }
-      setMsg("✅ Feedback submitted for all variants.");
+
+      if (successCount === variants.length) {
+        setFeedbackStatus("success");
+        setMsg("✅ Feedback submitted successfully. Thank you for your feedback!");
+        setFeedbackComment(""); // clear textarea on full success
+      } else if (successCount > 0) {
+        setFeedbackStatus("partial");
+        setMsg("⚠️ Some feedback entries failed to submit. Please try again if needed.");
+      } else {
+        setFeedbackStatus("error");
+        setMsg("❌ Feedback submission failed. Please try again.");
+      }
     } catch (err) {
       console.error(err);
-      setMsg("❌ Feedback submission error.");
+      setFeedbackStatus("error");
+      setMsg("❌ Feedback submission error. Please try again.");
     } finally {
       setSubmittingFeedback(false);
     }
@@ -367,7 +394,40 @@ export default function App() {
             </div>
           )}
 
-          {msg && <div className="message">{msg}</div>}
+          {msg && (
+            <div
+              className="message"
+              style={{
+                marginTop: 10,
+                padding: "8px 10px",
+                borderRadius: 8,
+                background:
+                  feedbackStatus === "success"
+                    ? "rgba(34,197,94,0.12)"
+                    : feedbackStatus === "partial"
+                    ? "rgba(250,204,21,0.08)"
+                    : feedbackStatus === "error"
+                    ? "rgba(239,68,68,0.08)"
+                    : "rgba(255,255,255,0.02)",
+                color:
+                  feedbackStatus === "error"
+                    ? "#ffb4b4"
+                    : feedbackStatus === "partial"
+                    ? "#ffd98a"
+                    : "#e6ffe6",
+                border:
+                  feedbackStatus === "error"
+                    ? "1px solid rgba(239,68,68,0.18)"
+                    : feedbackStatus === "partial"
+                    ? "1px solid rgba(250,204,21,0.12)"
+                    : feedbackStatus === "success"
+                    ? "1px solid rgba(34,197,94,0.16)"
+                    : "1px solid rgba(255,255,255,0.03)",
+              }}
+            >
+              {msg}
+            </div>
+          )}
         </section>
 
         <section className="card">
@@ -536,40 +596,40 @@ export default function App() {
               </div>
 
               {!loading && (
-                <div style={{ marginTop: 12 }}>
-                  <div className="feedbackRow feedbackCommentRow">
-                    <textarea
-                      className="feedbackTextarea"
-                      placeholder="Optional feedback comment for all variants..."
-                      value={feedbackComment}
-                      onChange={(e) => setFeedbackComment(e.target.value)}
-                    />
-                  </div>
+                        <div style={{ marginTop: 12 }}>
+                          <div className="feedbackRow feedbackCommentRow">
+                            <textarea
+                              className="feedbackTextarea"
+                              placeholder="Optional feedback comment for all variants..."
+                              value={feedbackComment}
+                              onChange={(e) => setFeedbackComment(e.target.value)}
+                            />
+                          </div>
 
-                  <div style={{ marginTop: 10, display: "flex", gap: 8 }}>
-                    <button
-                      className="btn btnPrimary"
-                      onClick={submitAllFeedback}
-                      disabled={submittingFeedback}
-                    >
-                      {submittingFeedback
-                        ? "Submitting..."
-                        : "Submit All Feedback"}
-                    </button>
+                          <div style={{ marginTop: 10, display: "flex", gap: 8 }}>
+                            <button
+                              className="btn btnPrimary"
+                              onClick={submitAllFeedback}
+                              disabled={submittingFeedback}
+                            >
+                              {submittingFeedback ? "Submitting..." : "Submit All Feedback"}
+                            </button>
 
-                    <button
-                      className="btn"
-                      onClick={() => {
-                        setFeedbackComment("");
-                        setScores({});
-                        initScoresForVariants(variants);
-                      }}
-                    >
-                      Clear
-                    </button>
-                  </div>
-                </div>
-              )}
+                            <button
+                              className="btn"
+                              onClick={() => {
+                                setFeedbackComment("");
+                                setScores({});
+                                initScoresForVariants(variants);
+                                setFeedbackStatus(null);
+                                setMsg("");
+                              }}
+                            >
+                              Clear
+                            </button>
+                          </div>
+                        </div>
+                      )}
             </section>
           </div>
         </section>

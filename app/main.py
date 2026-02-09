@@ -11,12 +11,22 @@ Responsibilities:
 - Slider-based user feedback collection
 - NLP sentiment analysis on comments
 - User satisfaction analytics (matplotlib pie chart)
+- Developer-only analytics and reporting (token-protected)
 """
 
 # -----------------------------
 # Core FastAPI imports
 # -----------------------------
-from fastapi import FastAPI, UploadFile, File, Query, Body
+from fastapi import (
+    FastAPI,
+    UploadFile,
+    File,
+    Query,
+    Body,
+    Header,
+    HTTPException,
+    Depends,
+)
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import Response
@@ -28,6 +38,7 @@ from pathlib import Path
 from datetime import datetime
 import uuid
 import json
+import os
 
 # -----------------------------
 # Internal application modules
@@ -36,6 +47,7 @@ from app.storage import UPLOAD_DIR, OUTPUT_DIR, clear_storage
 from app.pipeline import process_image
 from app.feedback_nlp import analyze_feedback
 from app.review_analytics import generate_satisfaction_pie
+from app.dev_analytics import analyze_reviews, generate_dev_report_png
 
 
 # =============================================================================
@@ -44,12 +56,11 @@ from app.review_analytics import generate_satisfaction_pie
 app = FastAPI(
     title="AI Image Colorizer API",
     description="Backend API for image enhancement, colorization, and user feedback analytics",
-    version="1.1.0"
+    version="1.2.0",
 )
 
 # =============================================================================
 # CORS CONFIGURATION
-# Allows React frontend (Vite) to communicate with this backend
 # =============================================================================
 app.add_middleware(
     CORSMiddleware,
@@ -72,13 +83,33 @@ app.mount("/outputs", StaticFiles(directory=OUTPUT_DIR), name="outputs")
 
 
 # =============================================================================
+# DEV TOKEN SECURITY (LIGHTWEIGHT, NO ACCOUNTS)
+# =============================================================================
+DEV_TOKEN = os.getenv("DEV_DASHBOARD_TOKEN")
+
+
+def verify_dev_token(x_dev_token: str = Header(None)):
+    if DEV_TOKEN is None:
+        raise HTTPException(
+            status_code=403,
+            detail="Developer dashboard disabled",
+        )
+
+    if x_dev_token != DEV_TOKEN:
+        raise HTTPException(
+            status_code=403,
+            detail="Invalid developer token",
+        )
+
+
+# =============================================================================
 # ROOT / HEALTH CHECK
 # =============================================================================
 @app.get("/")
 def root():
     return {
         "status": "ok",
-        "message": "Backend running"
+        "message": "Backend running",
     }
 
 
@@ -88,7 +119,10 @@ def root():
 @app.post("/api/upload")
 async def upload_image(
     file: UploadFile = File(...),
-    mode: str = Query("enhance", description="Processing mode: enhance | colorize | both")
+    mode: str = Query(
+        "enhance",
+        description="Processing mode: enhance | colorize | both",
+    ),
 ):
     ext = Path(file.filename).suffix.lower()
     if ext not in [".png", ".jpg", ".jpeg", ".webp"]:
@@ -109,7 +143,7 @@ async def upload_image(
         "message": "Upload successful",
         "mode": mode,
         "original": f"/uploads/{save_path.name}",
-        "variants": variants
+        "variants": variants,
     }
 
 
@@ -126,7 +160,6 @@ def delete_all():
 
 # =============================================================================
 # SLIDER-BASED USER REVIEW SUBMISSION
-# Matches current React frontend exactly
 # =============================================================================
 @app.post("/api/reviews")
 async def submit_review(payload: dict = Body(...)):
@@ -154,7 +187,7 @@ async def submit_review(payload: dict = Body(...)):
         "label": label,
         "score": score,
         "sentiment": sentiment,
-        "timestamp": datetime.utcnow().isoformat()
+        "timestamp": datetime.utcnow().isoformat(),
     }
 
     with open(reviews_file, "a", encoding="utf-8") as f:
@@ -162,19 +195,42 @@ async def submit_review(payload: dict = Body(...)):
 
     return {
         "message": "Review recorded",
-        "sentiment": sentiment
+        "sentiment": sentiment,
     }
 
 
 # =============================================================================
-# USER SATISFACTION ANALYTICS (PIE CHART)
+# USER SATISFACTION ANALYTICS (PUBLIC)
 # =============================================================================
 @app.get("/api/reviews/summary")
 def review_summary():
     image_bytes = generate_satisfaction_pie()
     return Response(
         content=image_bytes,
-        media_type="image/png"
+        media_type="image/png",
+    )
+
+
+# =============================================================================
+# DEVELOPER ANALYTICS (TOKEN-PROTECTED)
+# =============================================================================
+@app.get("/api/dev/analytics")
+def dev_analytics(_: None = Depends(verify_dev_token)):
+    """
+    Returns structured NLP + score analytics for developer inspection.
+    """
+    return analyze_reviews()
+
+
+@app.get("/api/dev/report")
+def dev_report(_: None = Depends(verify_dev_token)):
+    """
+    Returns a PNG report summarizing review analytics.
+    """
+    image_bytes = generate_dev_report_png()
+    return Response(
+        content=image_bytes,
+        media_type="image/png",
     )
 
 
@@ -183,9 +239,10 @@ def review_summary():
 # =============================================================================
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(
         "app.main:app",
         host="127.0.0.1",
         port=8000,
-        reload=False
+        reload=False,
     )

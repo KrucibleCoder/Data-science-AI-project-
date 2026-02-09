@@ -1,0 +1,9 @@
+### Developer analytics (JSON)
+GET http://127.0.0.1:8000/api/dev/analytics
+X-DEV-TOKEN: demo-dev-token_00
+
+###
+
+### Developer report (PNG)
+GET http://127.0.0.1:8000/api/dev/report
+X-DEV-TOKEN: demo-dev-token_00

@@ -5,6 +5,9 @@ import io
 from collections import defaultdict
 import random
 
+import matplotlib
+matplotlib.use("Agg")
+
 # =============================================================================
 # Configuration
 # =============================================================================
