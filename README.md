@@ -149,7 +149,7 @@ AI-colorizer/
 ├── outputs/                 # generated outputs (ignored)
 │
 ├── models/
-│   └── colorization/        # model files (ignored)
+│   └── colorization/        # model files
 │
 └── frontend/                # React frontend
 ```

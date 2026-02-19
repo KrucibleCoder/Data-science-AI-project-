@@ -59,7 +59,7 @@ AI-colorizer/
 ├── outputs/                 # Processed Images (gitignored)
 │
 ├── models/
-│   └── colorization/        # AI Weights (Local Only - NOT committed)
+│   └── colorization/        # AI Weights
 │
 └── frontend/                # React Vite Project
     └── src/pages/DevDashboard.jsx
