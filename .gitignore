@@ -12,11 +12,6 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
-# ML models / weights (DO NOT COMMIT)
-/models/colorization/*.prototxt
-/models/colorization/*.npy
-/models/colorization/*.caffemodel
-
 # Node junk
 frontend/node_modules/
 
